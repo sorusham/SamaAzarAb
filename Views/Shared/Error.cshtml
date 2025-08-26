@@ -1,0 +1,63 @@
+﻿@model ErrorViewModel
+@{
+    ViewData["Title"] = "خطا در پردازش درخواست";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow border-left-danger">
+                <div class="card-header bg-danger text-white">
+                    <h5 class="m-0">
+                        <i class="bi bi-exclamation-octagon-fill me-2"></i>@ViewData["Title"]
+                    </h5>
+                </div>
+                <div class="card-body text-center">
+                    <i class="bi bi-emoji-dizzy text-danger display-1 mb-3"></i>
+                    <h4 class="card-title text-danger mb-3">متاسفانه خطایی رخ داده است!</h4>
+                    <p class="text-muted">
+                        مشکلی در پردازش درخواست شما پیش آمده است. لطفا دقایقی دیگر مجددا تلاش کنید یا با راهبر سیستم تماس بگیرید.
+                    </p>
+
+                    @if (Model.ShowRequestId)
+                    {
+                        <div class="alert alert-secondary small mt-4 text-start">
+                           <strong>شناسه درخواست (Request ID):</strong> <code class="user-select-all">@Model.RequestId</code>
+                           <br>
+                           <small class="text-muted">این شناسه را برای پیگیری مشکل به راهبر سیستم ارائه دهید.</small>
+                        </div>
+                    }
+
+                    <div class="mt-4">
+                        <a asp-action="Index" asp-controller="Home" class="btn btn-primary">
+                           <i class="bi bi-house me-1"></i> بازگشت به صفحه اصلی
+                        </a>
+                        @* لینک تماس با پشتیبانی (اختیاری) *@
+                        @* <a href="mailto:support@example.com?subject=Error Request ID: @Model.RequestId" class="btn btn-outline-secondary ms-2">
+                            <i class="bi bi-envelope me-1"></i> تماس با پشتیبانی
+                        </a> *@
+                    </div>
+                </div>
+
+                @* نمایش اطلاعات بیشتر فقط در حالت توسعه *@
+                @if (System.Diagnostics.Debugger.IsAttached || Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development")
+                {
+                    <div class="card-footer bg-light border-top">
+                         <div class="alert alert-warning d-flex align-items-center small mb-0" role="alert">
+                           <i class="bi bi-tools flex-shrink-0 me-2"></i>
+                           <div>
+                                <strong>حالت توسعه (Development Mode):</strong> اطلاعات زیر فقط برای توسعه‌دهنده نمایش داده می‌شود.
+                                <br>
+                                جزئیات بیشتر خطا (در صورت وجود Exception):
+                                @if (Model.Exception != null)
+                                {
+                                     <pre class="mt-2" style="max-height: 200px; overflow-y: auto; font-size: 0.8em; background-color: #eee; padding: 10px; border-radius: 5px;"><code class="text-dark">@Model.Exception</code></pre>
+                                }
+                           </div>
+                         </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

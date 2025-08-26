@@ -1,0 +1,118 @@
+@{
+    ViewData["Title"] = "آپلود فایل اکسل";
+}
+
+<div class="container-fluid fade-in">
+    <div class="row mb-4">
+        <div class="col">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-file-excel me-2"></i>
+                        آپلود فایل اکسل
+                    </h5>
+                </div>
+                <div class="card-body">
+                    @if (TempData["Error"] != null)
+                    {
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            @TempData["Error"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    }
+
+                    @if (TempData["Success"] != null)
+                    {
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <i class="fas fa-check-circle me-2"></i>
+                            @TempData["Success"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    }
+
+                    @if (TempData["Warning"] != null)
+                    {
+                        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                            <i class="fas fa-exclamation-circle me-2"></i>
+                            @TempData["Warning"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    }
+
+                    <form method="post" enctype="multipart/form-data" asp-action="UploadExcel">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-4">
+                                    <label class="form-label">دپارتمان</label>
+                                    <select name="departmentId" class="form-select" required>
+                                        <option value="">انتخاب کنید...</option>
+                                        @foreach (var dept in ViewBag.Departments)
+                                        {
+                                            <option value="@dept.Id">@dept.Name</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-4">
+                                    <label class="form-label">پروژه</label>
+                                    <select name="projectId" class="form-select" required>
+                                        <option value="">انتخاب کنید...</option>
+                                        @foreach (var proj in ViewBag.Projects)
+                                        {
+                                            <option value="@proj.Id">@proj.Name</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label">فایل اکسل</label>
+                            <input type="file" name="file" class="form-control" accept=".xls,.xlsx" required />
+                            <div class="form-text text-muted">
+                                <i class="fas fa-info-circle me-1"></i>
+                                فقط فایل‌های اکسل (.xls یا .xlsx) قابل قبول هستند.
+                            </div>
+                        </div>
+
+                        <div class="alert alert-info">
+                            <h6 class="alert-heading">
+                                <i class="fas fa-info-circle me-2"></i>
+                                راهنمای آپلود فایل اکسل
+                            </h6>
+                            <hr>
+                            <ul class="mb-0">
+                                <li>فایل اکسل باید شامل ستون‌های زیر باشد:
+                                    <ul>
+                                        <li>کد مدرک (Document Code)</li>
+                                        <li>نام مدرک (Document Name)</li>
+                                        <li>کد آذرآب (Azarab Code)</li>
+                                        <li>و سایر اطلاعات مربوطه</li>
+                                    </ul>
+                                </li>
+                                <li>داده‌ها باید از ردیف 4 به بعد قرار گیرند.</li>
+                                <li>هر شیت به عنوان یک دسته‌بندی جداگانه در نظر گرفته می‌شود.</li>
+                                <li>قبل از وارد کردن نهایی، پیش‌نمایشی از داده‌ها نمایش داده خواهد شد.</li>
+                            </ul>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-upload me-2"></i>
+                            آپلود و پیش‌نمایش
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        $(document).ready(function() {
+        });
+    </script>
+} 

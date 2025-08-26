@@ -1,0 +1,56 @@
+@model MessageForAzarab.Models.DocumentVersion
+
+@{
+    var document = ViewBag.Document as MessageForAzarab.Models.BaseDocument;
+}
+
+<div class="alert alert-info mb-3">
+    <i class="bi bi-info-circle me-2"></i>
+    در حال ایجاد نسخه جدید برای سند با کد <strong>@document?.DocCode</strong> و عنوان <strong>@document?.Title</strong>
+</div>
+
+<form id="versionCreateForm" asp-action="CreateVersion" asp-controller="Document" method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger mb-3 rounded p-2 bg-light"></div>
+    
+    <input type="hidden" asp-for="BaseDocumentId" value="@document?.Id" />
+    
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <div class="form-floating mb-3">
+                <input asp-for="RevisionNumber" class="form-control" value="@(document != null ? document.CurrentRevision + 1 : 1)" readonly />
+                <label asp-for="RevisionNumber">شماره نسخه</label>
+                <span asp-validation-for="RevisionNumber" class="text-danger"></span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <div class="form-floating mb-3">
+                <select asp-for="Status" class="form-select">
+                    <option value="O">باز</option>
+                    <option value="C">بسته</option>
+                </select>
+                <label asp-for="Status">وضعیت نسخه</label>
+                <span asp-validation-for="Status" class="text-danger"></span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="d-flex justify-content-between mt-4">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+            <i class="bi bi-x-lg"></i> انصراف
+        </button>
+        <button type="submit" class="btn btn-primary">
+            <i class="bi bi-save"></i> ایجاد نسخه
+        </button>
+    </div>
+</form>
+
+<script>
+    // فعال کردن اعتبارسنجی سمت کلاینت
+    $(function() {
+        // فعال کردن اعتبارسنجی Unobtrusive
+        $.validator.unobtrusive.parse('#versionCreateForm');
+    });
+</script> 

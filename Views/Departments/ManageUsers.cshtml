@@ -1,0 +1,132 @@
+@model MessageForAzarab.Models.ViewModels.DepartmentUsersViewModel
+
+@{
+    ViewData["Title"] = "مدیریت کاربران دپارتمان";
+}
+
+<div class="container-fluid">
+    <h2 class="my-4">@ViewData["Title"]: @Model.DepartmentName</h2>
+    
+    <div class="card shadow mb-4">
+        <div class="card-header py-3 d-flex justify-content-between align-items-center">
+            <h6 class="m-0 font-weight-bold text-primary">اختصاص کاربران به دپارتمان</h6>
+            <div>
+                <a asp-action="Details" asp-route-id="@Model.DepartmentId" class="btn btn-secondary btn-sm" data-toggle="tooltip" title="بازگشت به جزئیات دپارتمان">
+                    <i class="fas fa-arrow-right"></i> بازگشت به جزئیات
+                </a>
+            </div>
+        </div>
+        <div class="card-body">
+            <form asp-action="ManageUsers" method="post">
+                <input type="hidden" asp-for="DepartmentId" />
+                <input type="hidden" asp-for="DepartmentName" />
+                
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle"></i>
+                    کاربران مورد نظر را انتخاب کنید و در صورت نیاز نقش و وضعیت مدیریت دپارتمان آن‌ها را تعیین کنید.
+                </div>
+                
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover" id="usersTable" width="100%" cellspacing="0">
+                        <thead class="thead-light">
+                            <tr>
+                                <th style="width: 50px;">انتخاب</th>
+                                <th>نام کامل</th>
+                                <th>ایمیل</th>
+                                <th>نام کاربری</th>
+                                <th>نقش</th>
+                                <th style="width: 120px;">مدیر دپارتمان</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (int i = 0; i < Model.Users.Count; i++)
+                            {
+                                <tr>
+                                    <td class="text-center">
+                                        <input type="hidden" asp-for="@Model.Users[i].UserId" />
+                                        <input type="hidden" asp-for="@Model.Users[i].UserName" />
+                                        <input type="hidden" asp-for="@Model.Users[i].FullName" />
+                                        <input type="hidden" asp-for="@Model.Users[i].Email" />
+                                        <input asp-for="@Model.Users[i].IsSelected" class="form-check user-select-checkbox" />
+                                    </td>
+                                    <td>@Model.Users[i].FullName</td>
+                                    <td>@Model.Users[i].Email</td>
+                                    <td>@Model.Users[i].UserName</td>
+                                    <td>
+                                        <input asp-for="@Model.Users[i].Role" class="form-control role-input" placeholder="نقش کاربر (اختیاری)" />
+                                    </td>
+                                    <td class="text-center">
+                                        <div class="form-check">
+                                            <input asp-for="@Model.Users[i].IsDepartmentManager" class="form-check" />
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="mt-4 text-left">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> ذخیره تغییرات
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // فعال‌سازی tooltip
+            $('[data-toggle="tooltip"]').tooltip();
+            
+            // راه‌اندازی DataTable
+            $("#usersTable").DataTable({
+                language: {
+                    url: '/lib/datatables/Persian.json'
+                },
+                "order": [[ 1, "asc" ]],
+                "columnDefs": [
+                    { "orderable": false, "targets": [0, 4, 5] }
+                ]
+            });
+            
+            // فعال/غیرفعال کردن فیلدهای وابسته
+            $('.user-select-checkbox').change(function() {
+                var row = $(this).closest('tr');
+                var isChecked = $(this).prop('checked');
+                
+                // فیلدهای نقش و مدیر دپارتمان را فعال/غیرفعال می‌کنیم
+                row.find('.role-input').prop('disabled', !isChecked);
+                row.find('input[name$=".IsDepartmentManager"]').prop('disabled', !isChecked);
+                
+                // تغییر رنگ ردیف
+                if (isChecked) {
+                    row.addClass('table-active');
+                } else {
+                    row.removeClass('table-active');
+                    // پاک کردن مقادیر
+                    row.find('.role-input').val('');
+                    row.find('input[name$=".IsDepartmentManager"]').prop('checked', false);
+                }
+            });
+            
+            // اعمال وضعیت اولیه فیلدها
+            $('.user-select-checkbox').each(function() {
+                var isChecked = $(this).prop('checked');
+                var row = $(this).closest('tr');
+                
+                // فیلدهای نقش و مدیر دپارتمان را فعال/غیرفعال می‌کنیم
+                row.find('.role-input').prop('disabled', !isChecked);
+                row.find('input[name$=".IsDepartmentManager"]').prop('disabled', !isChecked);
+                
+                // اعمال کلاس به ردیف
+                if (isChecked) {
+                    row.addClass('table-active');
+                }
+            });
+        });
+    </script>
+} 

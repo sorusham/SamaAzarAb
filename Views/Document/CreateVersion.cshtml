@@ -1,0 +1,134 @@
+@model MessageForAzarab.Models.DocumentVersion
+
+@{
+    ViewData["Title"] = "ایجاد نسخه جدید";
+    var document = ViewBag.Document as MessageForAzarab.Models.BaseDocument;
+    var users = ViewBag.Users as IEnumerable<MessageForAzarab.Models.ApplicationUser>;
+}
+
+<div class="container-fluid fade-in">
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white py-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">
+                            <i class="bi bi-file-earmark-plus me-2"></i>
+                            ایجاد نسخه جدید برای سند
+                        </h5>
+                        <div class="text-white-50 small">
+                            <i class="bi bi-hash me-1"></i>@document?.DocCode
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body p-4">
+                    <form asp-action="CreateVersion" method="post" enctype="multipart/form-data">
+                        <input type="hidden" asp-for="BaseDocumentId" value="@document?.Id" />
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-4">
+                                    <label class="form-label">سند</label>
+                                    <input type="text" class="form-control" value="@document?.Title" readonly />
+                                </div>
+                                
+                                <div class="mb-4">
+                                    <label asp-for="RevisionNumber" class="form-label"></label>
+                                    <input asp-for="RevisionNumber" class="form-control" />
+                                    <span asp-validation-for="RevisionNumber" class="text-danger"></span>
+                                </div>
+                                
+                                <div class="mb-4">
+                                    <label asp-for="AssignedToId" class="form-label"></label>
+                                    <select asp-for="AssignedToId" class="form-select" asp-items="@(new SelectList(users, "Id", "FullName"))">
+                                        <option value="">-- انتخاب کنید --</option>
+                                    </select>
+                                    <span asp-validation-for="AssignedToId" class="text-danger"></span>
+                                </div>
+                                
+                                <div class="mb-4">
+                                    <label asp-for="Status" class="form-label"></label>
+                                    <select asp-for="Status" class="form-select">
+                                        <option value="O">باز</option>
+                                        <option value="C">بسته شده</option>
+                                    </select>
+                                    <span asp-validation-for="Status" class="text-danger"></span>
+                                </div>
+                                
+                                <div class="mb-4">
+                                    <label asp-for="Progress" class="form-label"></label>
+                                    <input asp-for="Progress" type="range" class="form-range" min="0" max="100" step="5" />
+                                    <div class="d-flex justify-content-between">
+                                        <span>0%</span>
+                                        <span id="progressValue">50%</span>
+                                        <span>100%</span>
+                                    </div>
+                                    <span asp-validation-for="Progress" class="text-danger"></span>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <div class="mb-4">
+                                    <label class="form-label">فایل‌های پیوست</label>
+                                    <input type="file" name="files" class="form-control" multiple />
+                                    <div class="form-text">می‌توانید چندین فایل را همزمان انتخاب کنید.</div>
+                                </div>
+                                
+                                <div class="mb-4">
+                                    <label class="form-label">توضیحات</label>
+                                    <textarea name="Description" class="form-control" rows="4"></textarea>
+                                </div>
+                                
+                                <div class="alert alert-info">
+                                    <i class="bi bi-info-circle me-2"></i>
+                                    <strong>راهنما:</strong>
+                                    <ul class="mb-0 mt-2">
+                                        <li>شماره نسخه باید منحصر به فرد باشد.</li>
+                                        <li>در صورت نیاز به تغییرات اساسی، نسخه جدید ثبت کنید.</li>
+                                        <li>پس از ثبت نسخه، امکان تغییر شماره نسخه وجود ندارد.</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-4">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check-lg me-2"></i>ثبت نسخه
+                            </button>
+                            <a asp-action="Details" asp-route-id="@document?.Id" class="btn btn-secondary">
+                                <i class="bi bi-x-lg me-2"></i>انصراف
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        $(document).ready(function () {
+            // نمایش درصد پیشرفت
+            $('#Progress').on('input', function() {
+                $('#progressValue').text($(this).val() + '%');
+            });
+            
+            // فعال‌سازی تولتیپ‌ها
+            const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl, {
+                    placement: 'top'
+                });
+            });
+            
+            // اعتبارسنجی فرم
+            $('form').on('submit', function () {
+                if ($(this).valid()) {
+                    $('button[type="submit"]').prop('disabled', true);
+                }
+            });
+        });
+    </script>
+} 

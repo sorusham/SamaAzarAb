@@ -1,0 +1,106 @@
+@model IEnumerable<MessageForAzarab.Models.Department>
+
+@{
+    ViewData["Title"] = "دپارتمان‌ها";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="h3 mb-0">
+                <i class="bi bi-building me-2 text-primary"></i>@ViewData["Title"]
+            </h2>
+            <p class="text-muted">مدیریت دپارتمان‌های سازمان</p>
+        </div>
+        
+        @if (User.IsInRole("Admin") || User.IsInRole("DCC"))
+        {
+            <a asp-action="Create" class="btn btn-primary">
+                <i class="bi bi-plus-lg me-1"></i>افزودن دپارتمان جدید
+            </a>
+        }
+    </div>
+    
+    <div class="row">
+        @foreach (var item in Model)
+        {
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="card h-100 shadow-sm border-0 hover-shadow">
+                    <div class="card-header bg-transparent d-flex justify-content-between align-items-center py-3">
+                        <h5 class="card-title mb-0">
+                            <i class="bi bi-building me-2"></i>@item.Name
+                        </h5>
+                        <div class="badge bg-light text-dark">
+                            <i class="bi bi-diagram-3 me-1"></i>@(item.Projects?.Count ?? 0) پروژه
+                        </div>
+                    </div>
+                    
+                    <div class="card-body">
+                        <div class="mb-3">
+                            @if (string.IsNullOrEmpty(item.Description))
+                            {
+                                <span class="text-muted fst-italic">بدون توضیحات</span>
+                            }
+                            else
+                            {
+                                <p class="card-text">@item.Description</p>
+                            }
+                        </div>
+                        
+                        <div class="d-flex justify-content-between align-items-center">
+                            <small class="text-muted">
+                                <i class="bi bi-calendar3 me-1"></i>ایجاد: @(item.CreatedAt?.ToString("yyyy/MM/dd") ?? "نامشخص")
+                            </small>
+                            
+                            @{
+                                var userCount = item.UserDepartments?.Count ?? 0;
+                                var badgeClass = userCount > 0 ? "bg-success" : "bg-secondary";
+                            }
+                            <span class="badge @badgeClass">
+                                <i class="bi bi-people me-1"></i>@userCount کاربر
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <div class="card-footer bg-transparent border-top-0">
+                        <div class="btn-group w-100">
+                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary">
+                                <i class="bi bi-info-circle me-1"></i>جزئیات
+                            </a>
+                            @if (User.IsInRole("Admin") || User.IsInRole("DCC"))
+                            {
+                                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-secondary">
+                                    <i class="bi bi-pencil me-1"></i>ویرایش
+                                </a>
+                                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger">
+                                    <i class="bi bi-trash me-1"></i>حذف
+                                </a>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+        
+        @if (!Model.Any())
+        {
+            <div class="col-12">
+                <div class="alert alert-info">
+                    <i class="bi bi-info-circle me-2"></i>هیچ دپارتمانی یافت نشد.
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // افکت‌های ظاهری کارت‌ها
+            $(".hover-shadow").hover(
+                function() { $(this).addClass("shadow"); },
+                function() { $(this).removeClass("shadow"); }
+            );
+        });
+    </script>
+} 

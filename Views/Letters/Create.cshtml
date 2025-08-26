@@ -1,0 +1,246 @@
+﻿@model MessageForAzarab.Models.Letter
+@inject Microsoft.AspNetCore.Identity.UserManager<MessageForAzarab.Models.ApplicationUser> UserManager
+@inject MessageForAzarab.Services.Interface.IUserService UserService
+
+@{
+    ViewData["Title"] = "ایجاد نامه جدید";
+    var currentUser = await UserService.GetCurrentUserAsync(User);
+    var users = await UserService.GetActiveUsersAsync();
+}
+
+<div class="container-fluid fade-in">
+    <!-- هدر صفحه -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div class="d-flex align-items-center">
+            <i class="bi bi-envelope-plus-fill text-primary fs-1 me-3"></i>
+            <div>
+                <h1 class="h3 mb-1">@ViewData["Title"]</h1>
+                <p class="text-muted mb-0">لطفاً اطلاعات نامه جدید را وارد کنید</p>
+            </div>
+        </div>
+        <a asp-action="Index" class="btn btn-outline-secondary" data-bs-toggle="tooltip" title="بازگشت به لیست">
+            <i class="bi bi-arrow-right"></i>
+        </a>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <!-- فرم اصلی -->
+            <div class="card shadow-sm">
+                <div class="card-body p-4">
+                    <form asp-action="Create" method="post" class="needs-validation" novalidate>
+                        @if (!ViewContext.ModelState.IsValid)
+                        {
+                            <div class="alert alert-danger d-flex align-items-center mb-4" role="alert">
+                                <i class="bi bi-exclamation-triangle-fill fs-4 me-2"></i>
+                                <div asp-validation-summary="ModelOnly"></div>
+                            </div>
+                        }
+
+                        <div class="row g-4">
+                            <!-- عنوان نامه -->
+                            <div class="col-md-8">
+                                <div class="form-floating">
+                                    <input asp-for="Title" class="form-control" placeholder="عنوان نامه" required />
+                                    <label asp-for="Title">عنوان نامه</label>
+                                    <div class="invalid-feedback">
+                                        <span asp-validation-for="Title"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- کد نامه -->
+                            <div class="col-md-4">
+                                <div class="p-3 bg-light rounded text-center">
+                                    <i class="bi bi-hash text-primary"></i>
+                                    <small class="d-block text-muted">کد نامه به صورت خودکار ایجاد می‌شود</small>
+                                </div>
+                            </div>
+
+                            <!-- فرستنده -->
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input asp-for="From" class="form-control bg-light" placeholder="فرستنده" value="@(currentUser?.FullName)" readonly />
+                                    <label asp-for="From">فرستنده</label>
+                                </div>
+                            </div>
+
+                            <!-- گیرنده -->
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <select asp-for="ReceiverId" class="form-select" required>
+                                        <option value="">انتخاب گیرنده...</option>
+                                        @foreach (var user in users.Where(u => u.Id != currentUser?.Id))
+                                        {
+                                            <option value="@user.Id">@user.FullName (@user.UserType)</option>
+                                        }
+                                    </select>
+                                    <label asp-for="ReceiverId">گیرنده</label>
+                                    <div class="invalid-feedback">
+                                        <span asp-validation-for="ReceiverId"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- تاریخ شروع -->
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input asp-for="StartDate" type="date" class="form-control" placeholder="تاریخ شروع" 
+                                           value="@DateTime.Now.ToString("yyyy-MM-dd")" required />
+                                    <label asp-for="StartDate">تاریخ شروع</label>
+                                    <div class="invalid-feedback">
+                                        <span asp-validation-for="StartDate"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- تاریخ انقضا -->
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input asp-for="ExpiryDate" type="date" class="form-control" placeholder="تاریخ انقضا" 
+                                           value="@DateTime.Now.AddMonths(1).ToString("yyyy-MM-dd")" required />
+                                    <label asp-for="ExpiryDate">تاریخ انقضا</label>
+                                    <div class="invalid-feedback">
+                                        <span asp-validation-for="ExpiryDate"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- توضیحات -->
+                            <div class="col-12">
+                                <div class="form-floating">
+                                    <textarea asp-for="Description" class="form-control" style="height: 120px" 
+                                              placeholder="توضیحات"></textarea>
+                                    <label asp-for="Description">توضیحات</label>
+                                    <div class="invalid-feedback">
+                                        <span asp-validation-for="Description"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        @if (currentUser != null)
+                        {
+                            <input type="hidden" asp-for="SenderId" value="@currentUser.Id" />
+                        }
+
+                        <hr class="my-4">
+
+                        <div class="d-flex justify-content-end gap-2">
+                            <a asp-action="Index" class="btn btn-light">
+                                <i class="bi bi-x-lg me-1"></i>
+                                انصراف
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check-lg me-1"></i>
+                                ایجاد نامه
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- راهنما -->
+        <div class="col-lg-4">
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <h5 class="card-title mb-3">
+                        <i class="bi bi-info-circle-fill text-primary me-2"></i>
+                        راهنمای ایجاد نامه
+                    </h5>
+                    <div class="vstack gap-3">
+                        <div class="d-flex align-items-center">
+                            <div class="bg-light rounded-circle p-2 me-3">
+                                <i class="bi bi-1-circle"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-1">عنوان نامه</h6>
+                                <small class="text-muted">عنوان مناسب و گویا برای نامه انتخاب کنید</small>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <div class="bg-light rounded-circle p-2 me-3">
+                                <i class="bi bi-2-circle"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-1">انتخاب گیرنده</h6>
+                                <small class="text-muted">گیرنده نامه را از لیست کاربران انتخاب کنید</small>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <div class="bg-light rounded-circle p-2 me-3">
+                                <i class="bi bi-3-circle"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-1">تاریخ‌ها</h6>
+                                <small class="text-muted">تاریخ شروع و انقضای نامه را مشخص کنید</small>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <div class="bg-light rounded-circle p-2 me-3">
+                                <i class="bi bi-4-circle"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-1">توضیحات</h6>
+                                <small class="text-muted">در صورت نیاز توضیحات تکمیلی را وارد کنید</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-lightbulb-fill fs-1 me-3"></i>
+                        <div>
+                            <h5 class="card-title mb-1">نکته</h5>
+                            <p class="card-text mb-0">پس از ایجاد نامه می‌توانید پیوست‌های مورد نظر را اضافه کنید.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        $(document).ready(function () {
+            // فعال‌سازی تولتیپ‌ها
+            const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl, {
+                    placement: 'top'
+                });
+            });
+
+            // فعال‌سازی اعتبارسنجی سمت کلاینت
+            const forms = document.querySelectorAll('.needs-validation');
+            Array.from(forms).forEach(form => {
+                form.addEventListener('submit', event => {
+                    if (!form.checkValidity()) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                    form.classList.add('was-validated');
+                }, false);
+            });
+
+            // بررسی تاریخ انقضا
+            $('#ExpiryDate').change(function() {
+                const startDate = new Date($('#StartDate').val());
+                const expiryDate = new Date($(this).val());
+                
+                if (expiryDate <= startDate) {
+                    $(this).addClass('is-invalid');
+                    $(this).next('.invalid-feedback').text('تاریخ انقضا باید بعد از تاریخ شروع باشد');
+                } else {
+                    $(this).removeClass('is-invalid');
+                }
+            });
+        });
+    </script>
+}

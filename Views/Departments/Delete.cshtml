@@ -1,0 +1,76 @@
+@model MessageForAzarab.Models.Department
+
+@{
+    ViewData["Title"] = "حذف دپارتمان";
+}
+
+<div class="container-fluid">
+    <h2 class="my-4">@ViewData["Title"]: @Model.Name</h2>
+    
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-danger">آیا از حذف این دپارتمان اطمینان دارید؟</h6>
+        </div>
+        <div class="card-body">
+            <div class="alert alert-warning">
+                <i class="fas fa-exclamation-triangle"></i> توجه: حذف دپارتمان ممکن است بر روی اطلاعات مرتبط تأثیر بگذارد.
+            </div>
+            
+            <dl class="row">
+                <dt class="col-sm-2 text-right">نام دپارتمان:</dt>
+                <dd class="col-sm-10">@Model.Name</dd>
+                
+                <dt class="col-sm-2 text-right">توضیحات:</dt>
+                <dd class="col-sm-10">
+                    @if (string.IsNullOrEmpty(Model.Description))
+                    {
+                        <span class="text-muted">بدون توضیحات</span>
+                    }
+                    else
+                    {
+                        @Model.Description
+                    }
+                </dd>
+            </dl>
+            
+            <form asp-action="Delete" method="post" class="mt-4">
+                <input type="hidden" asp-for="Id" />
+                <div class="form-group">
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-trash-alt"></i> حذف دپارتمان
+                    </button>
+                    <a asp-action="Index" class="btn btn-secondary">
+                        <i class="fas fa-times"></i> انصراف
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- اطلاعات کاربران مرتبط -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">کاربران این دپارتمان</h6>
+        </div>
+        <div class="card-body">
+            <div class="alert alert-info">
+                در حال حاضر امکان نمایش کاربران دپارتمان فعال نیست.
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Initialize DataTable for users if any exist
+            if ($("#usersTable tbody tr").length > 0) {
+                $("#usersTable").DataTable({
+                    language: {
+                        url: '/lib/datatables/Persian.json'
+                    }
+                });
+            }
+        });
+    </script>
+} 

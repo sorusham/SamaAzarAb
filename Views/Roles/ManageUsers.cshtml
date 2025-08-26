@@ -1,0 +1,70 @@
+@model MessageForAzarab.Models.ViewModels.RoleUsersViewModel
+
+@{
+    ViewData["Title"] = "مدیریت کاربران نقش";
+}
+
+<div class="container fade-in">
+    <div class="card shadow-sm">
+        <div class="card-header bg-info text-white">
+            <h5 class="mb-0">
+                <i class="bi bi-people-fill me-2"></i>
+                مدیریت کاربران نقش <strong>@Model.RoleName</strong>
+            </h5>
+        </div>
+        <div class="card-body">
+            <form asp-action="ManageUsers" method="post">
+                <input type="hidden" asp-for="RoleId" />
+                <input type="hidden" asp-for="RoleName" />
+                
+                <div class="alert alert-info mb-4">
+                    <i class="bi bi-info-circle-fill"></i>
+                    کاربرانی را که می‌خواهید به این نقش اضافه شوند، انتخاب کنید.
+                </div>
+                
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>انتخاب</th>
+                                <th>نام کاربری</th>
+                                <th>نام کامل</th>
+                                <th>ایمیل</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (int i = 0; i < Model.Users.Count; i++)
+                            {
+                                <tr>
+                                    <td>
+                                        <input type="hidden" asp-for="@Model.Users[i].UserId" />
+                                        <input type="hidden" asp-for="@Model.Users[i].UserName" />
+                                        <input type="hidden" asp-for="@Model.Users[i].Email" />
+                                        <input type="hidden" asp-for="@Model.Users[i].FullName" />
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" asp-for="@Model.Users[i].IsSelected" />
+                                        </div>
+                                    </td>
+                                    <td>@Model.Users[i].UserName</td>
+                                    <td>@Model.Users[i].FullName</td>
+                                    <td>@Model.Users[i].Email</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="d-flex justify-content-between mt-4">
+                    <a asp-action="Index" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-right"></i>
+                        بازگشت به لیست نقش‌ها
+                    </a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check-lg"></i>
+                        ذخیره تغییرات
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div> 

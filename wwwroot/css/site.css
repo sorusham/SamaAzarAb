@@ -1,0 +1,499 @@
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+:root {
+  --primary-color: #0d6efd;
+  --secondary-color: #6c757d;
+  --success-color: #198754;
+  --info-color: #0dcaf0;
+  --warning-color: #ffc107;
+  --danger-color: #dc3545;
+  --light-color: #f8f9fa;
+  --dark-color: #212529;
+  --body-bg: #ffffff;
+  --body-color: #212529;
+  --card-bg: #ffffff;
+  --border-color: #dee2e6;
+  --input-bg: #ffffff;
+  --input-border: #ced4da;
+  --input-focus-border: #86b7fe;
+  --input-focus-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+  --table-header-bg: #f8f9fa;
+  --table-border: #dee2e6;
+  --text-muted: #6c757d;
+  --shadow-color: rgba(0, 0, 0, 0.1);
+  --footer-bg: #f8f9fa;
+  --navbar-bg: #343a40;
+  --navbar-color: #fff;
+}
+
+.light-theme {
+  --primary-color: #0d6efd;
+  --secondary-color: #6c757d;
+  --success-color: #198754;
+  --info-color: #0dcaf0;
+  --warning-color: #ffc107;
+  --danger-color: #dc3545;
+  --light-color: #f8f9fa;
+  --dark-color: #212529;
+  --body-bg: #ffffff;
+  --body-color: #212529;
+  --card-bg: #ffffff;
+  --border-color: #dee2e6;
+  --input-bg: #ffffff;
+  --input-border: #ced4da;
+  --input-focus-border: #86b7fe;
+  --input-focus-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+  --table-header-bg: #f8f9fa;
+  --table-border: #dee2e6;
+  --text-muted: #6c757d;
+  --shadow-color: rgba(0, 0, 0, 0.1);
+  --footer-bg: #f8f9fa;
+  --navbar-bg: #f8f9fa;
+  --navbar-color: #212529;
+}
+
+.dark-theme {
+  --primary-color: #3b82f6;
+  --secondary-color: #94a3b8;
+  --success-color: #22c55e;
+  --info-color: #0ea5e9;
+  --warning-color: #f59e0b;
+  --danger-color: #ef4444;
+  --light-color: #475569;
+  --dark-color: #f8fafc;
+  --body-bg: #0f172a;
+  --body-color: #e2e8f0;
+  --card-bg: #1e293b;
+  --border-color: #334155;
+  --input-bg: #1e293b;
+  --input-border: #475569;
+  --input-focus-border: #3b82f6;
+  --input-focus-shadow: 0 0 0 0.25rem rgba(59, 130, 246, 0.25);
+  --table-header-bg: #1e293b;
+  --table-border: #334155;
+  --text-muted: #94a3b8;
+  --shadow-color: rgba(0, 0, 0, 0.5);
+  --footer-bg: #1e293b;
+  --navbar-bg: #1e293b;
+  --navbar-color: #f8fafc;
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem var(--primary-color);
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 60px;
+  font-family: 'Vazir', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: var(--body-bg);
+  color: var(--body-color);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* راست به چپ */
+body {
+  direction: rtl;
+  text-align: right;
+}
+
+/* استایل‌های کارت */
+.card {
+  box-shadow: 0 4px 8px var(--shadow-color);
+  border: none;
+  margin-bottom: 20px;
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+}
+
+.card-header {
+  background-color: var(--light-color);
+  border-bottom: 1px solid var(--border-color);
+}
+
+/* استایل‌های جدول */
+.table {
+  color: var(--body-color);
+  border-color: var(--table-border);
+}
+
+.table th {
+  background-color: var(--table-header-bg);
+  font-weight: 600;
+}
+
+.table td, .table th {
+  border-color: var(--table-border);
+}
+
+/* استایل‌های دکمه */
+.btn {
+  border-radius: 4px;
+  padding: 8px 16px;
+}
+
+.btn-primary {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+.btn-secondary {
+  background-color: var(--secondary-color);
+  border-color: var(--secondary-color);
+}
+
+.btn-outline-light {
+  color: var(--navbar-color);
+  border-color: var(--navbar-color);
+}
+
+/* استایل‌های فرم */
+.form-control {
+  border-radius: 4px;
+  padding: 8px 12px;
+  background-color: var(--input-bg);
+  border-color: var(--input-border);
+  color: var(--body-color);
+}
+
+.form-control:focus {
+  border-color: var(--input-focus-border);
+  box-shadow: var(--input-focus-shadow);
+  background-color: var(--input-bg);
+  color: var(--body-color);
+}
+
+/* استایل‌های آکاردئون */
+.accordion-button:not(.collapsed) {
+  background-color: var(--light-color);
+  color: var(--primary-color);
+}
+
+.accordion-button:focus {
+  box-shadow: none;
+  border-color: var(--border-color);
+}
+
+.accordion-body {
+  background-color: var(--card-bg);
+}
+
+/* استایل‌های بج */
+.badge {
+  padding: 6px 10px;
+  font-weight: 500;
+}
+
+/* استایل‌های فوتر */
+.footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  white-space: nowrap;
+  line-height: 60px;
+  background-color: var(--footer-bg);
+  border-top: 1px solid var(--border-color);
+  color: var(--body-color);
+}
+
+/* استایل‌های نوار ناوبری */
+.navbar {
+  box-shadow: 0 2px 4px var(--shadow-color);
+  background-color: var(--navbar-bg) !important;
+}
+
+.navbar-brand {
+  font-weight: 600;
+  color: var(--navbar-color) !important;
+}
+
+.nav-link {
+  padding: 8px 16px;
+  color: var(--navbar-color) !important;
+}
+
+.navbar-toggler {
+  border-color: var(--navbar-color);
+}
+
+.navbar-dark .navbar-toggler-icon {
+  filter: invert(1);
+}
+
+/* استایل‌های آیکون */
+.bi {
+  margin-left: 5px;
+}
+
+/* استایل‌های پیغام‌های خطا */
+.text-danger {
+  color: var(--danger-color) !important;
+}
+
+.text-muted {
+  color: var(--text-muted) !important;
+}
+
+/* استایل‌های تاریخ */
+.date {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+/* استایل‌های حجم فایل */
+.file-size {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
+  color: var(--text-muted);
+  text-align: end;
+}
+
+.form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
+  text-align: start;
+}
+
+/* استایل‌های تم */
+.theme-icon-dark {
+  display: none;
+}
+
+.theme-icon-light {
+  display: inline-block;
+}
+
+.light-theme .theme-icon-dark {
+  display: inline-block;
+}
+
+.light-theme .theme-icon-light {
+  display: none;
+}
+
+.dark-theme .theme-icon-dark {
+  display: none;
+}
+
+.dark-theme .theme-icon-light {
+  display: inline-block;
+}
+
+/* استایل‌های اعلان‌ها */
+.notification-badge {
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+  line-height: 1;
+  border-radius: 50%;
+  background-color: var(--danger-color);
+  color: white;
+}
+
+.notification-item {
+  border-bottom: 1px solid var(--border-color);
+  padding: 10px;
+  transition: background-color 0.2s;
+}
+
+.notification-item:hover {
+  background-color: rgba(0, 123, 255, 0.1);
+}
+
+.notification-item.unread {
+  background-color: rgba(13, 110, 253, 0.05);
+}
+
+.notification-title {
+  font-weight: bold;
+}
+
+.notification-time {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+
+/* Dark theme specific overrides */
+.dark-theme .card {
+  box-shadow: 0 4px 6px -1px var(--shadow-color), 0 2px 4px -2px var(--shadow-color);
+}
+
+.dark-theme .table {
+  --bs-table-striped-bg: #334155;
+  --bs-table-hover-bg: #475569;
+}
+
+.dark-theme .form-control::placeholder {
+  color: var(--text-muted);
+}
+
+.dark-theme .btn-outline-light:hover {
+  background-color: var(--light-color);
+  color: var(--dark-color);
+}
+
+.dark-theme .accordion-button {
+  background-color: var(--card-bg);
+  color: var(--body-color);
+}
+
+.dark-theme .accordion-button:not(.collapsed) {
+  background-color: var(--light-color);
+  color: var(--dark-color);
+}
+
+.dark-theme .accordion-body {
+  background-color: var(--card-bg);
+  color: var(--body-color);
+}
+
+.dark-theme .modal-content {
+  background-color: var(--card-bg);
+  border-color: var(--border-color);
+}
+
+.dark-theme .modal-header {
+  border-bottom-color: var(--border-color);
+}
+
+.dark-theme .modal-footer {
+  border-top-color: var(--border-color);
+}
+
+.dark-theme .dropdown-menu {
+  background-color: var(--card-bg);
+  border-color: var(--border-color);
+}
+
+.dark-theme .dropdown-item {
+  color: var(--body-color);
+}
+
+.dark-theme .dropdown-item:hover {
+  background-color: var(--light-color);
+  color: var(--dark-color);
+}
+
+.dark-theme .nav-tabs {
+  border-bottom-color: var(--border-color);
+}
+
+.dark-theme .nav-tabs .nav-link.active {
+  background-color: var(--card-bg);
+  border-color: var(--border-color);
+  color: var(--body-color);
+}
+
+.dark-theme .nav-tabs .nav-link:hover {
+  border-color: var(--border-color);
+}
+
+/* Dark theme scrollbar styles */
+.dark-theme ::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+.dark-theme ::-webkit-scrollbar-track {
+  background: var(--card-bg);
+}
+
+.dark-theme ::-webkit-scrollbar-thumb {
+  background: var(--light-color);
+  border-radius: 6px;
+  border: 3px solid var(--card-bg);
+}
+
+.dark-theme ::-webkit-scrollbar-thumb:hover {
+  background: var(--secondary-color);
+}
+
+/* Dark theme text selection */
+.dark-theme ::selection {
+  background-color: var(--primary-color);
+  color: var(--dark-color);
+}
+
+.dark-theme ::-moz-selection {
+  background-color: var(--primary-color);
+  color: var(--dark-color);
+}
+
+/* Dark theme focus styles */
+.dark-theme *:focus {
+  outline-color: var(--primary-color);
+}
+
+/* Dark theme code and pre elements */
+.dark-theme code, .dark-theme pre {
+  background-color: var(--body-bg);
+  border-color: var(--border-color);
+  color: var(--body-color);
+}
+
+/* Dark theme tooltips */
+.dark-theme .tooltip-inner {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  color: var(--body-color);
+}
+
+/* Dark theme popover */
+.dark-theme .popover {
+  background-color: var(--card-bg);
+  border-color: var(--border-color);
+}
+
+.dark-theme .popover-header {
+  background-color: var(--light-color);
+  border-bottom-color: var(--border-color);
+  color: var(--dark-color);
+}
+
+.dark-theme .popover-body {
+  color: var(--body-color);
+}
+
+/* Dark theme list groups */
+.dark-theme .list-group-item {
+  background-color: var(--card-bg);
+  border-color: var(--border-color);
+  color: var(--body-color);
+}
+
+.dark-theme .list-group-item.active {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+  color: var(--dark-color);
+}
+
+/* Dark theme badges */
+.dark-theme .badge.bg-light {
+  background-color: var(--light-color) !important;
+  color: var(--dark-color);
+}
+
+/* Dark theme alerts */
+.dark-theme .alert {
+  border-color: var(--border-color);
+}
+
+.dark-theme .alert-light {
+  background-color: var(--light-color);
+  color: var(--dark-color);
+}

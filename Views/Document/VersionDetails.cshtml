@@ -1,0 +1,462 @@
+@model MessageForAzarab.Models.DocumentVersion
+@using MessageForAzarab.Services
+@inject IFileService _fileService
+
+@{
+    ViewData["Title"] = $"جزئیات نسخه {Model.RevisionNumber} - {Model.BaseDocument?.Title}";
+}
+
+<div class="container-fluid fade-in">
+    <!-- هدر صفحه -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div class="d-flex align-items-center">
+            <div class="icon-box bg-primary-soft rounded-circle p-3 me-3">
+                <i class="bi bi-file-earmark-text text-primary fs-1"></i>
+            </div>
+            <div>
+                <h1 class="h3 mb-1">@ViewData["Title"]</h1>
+                <div class="text-muted">
+                    <i class="bi bi-hash me-1"></i>
+                    کد سند: <span class="badge bg-primary">@Model.BaseDocument?.DocCode</span>
+                    <span class="badge bg-secondary ms-2">@Model.BaseDocument?.Title</span>
+                </div>
+            </div>
+        </div>
+        <div class="d-flex gap-2">
+            @if (!Model.IsSent)
+            {
+                <a asp-action="EditVersion" asp-route-id="@Model.Id" class="btn btn-primary" data-bs-toggle="tooltip" title="ویرایش اطلاعات این نسخه">
+                    <i class="bi bi-pencil-square me-1"></i>
+                    ویرایش نسخه
+                </a>
+            }
+            <a asp-action="Details" asp-route-id="@Model.BaseDocumentId" class="btn btn-outline-secondary" data-bs-toggle="tooltip" title="بازگشت به سند اصلی">
+                <i class="bi bi-arrow-right me-1"></i>
+                بازگشت به سند
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- اطلاعات نسخه -->
+        <div class="col-lg-8 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body p-4">
+                    <h5 class="card-title d-flex align-items-center mb-4">
+                        <i class="bi bi-info-circle-fill text-primary me-2"></i>
+                        اطلاعات نسخه
+                    </h5>
+
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <div class="info-box bg-light rounded p-3">
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="bi bi-hash text-primary me-2"></i>
+                                    <strong>شماره نسخه</strong>
+                                </div>
+                                <div class="h4 mb-0">@Model.RevisionNumber</div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="info-box bg-light rounded p-3">
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="bi bi-toggle-on text-primary me-2"></i>
+                                    <strong>وضعیت نسخه</strong>
+                                </div>
+                                <div>
+                                    <span class="badge @(Model.Status == "O" ? "bg-info" : "bg-secondary")">
+                                        <i class="bi @(Model.Status == "O" ? "bi-unlock" : "bi-lock") me-1"></i>
+                                        @(Model.Status == "O" ? "باز" : "بسته")
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="info-box bg-light rounded p-3">
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="bi bi-send-check text-primary me-2"></i>
+                                    <strong>وضعیت ارسال</strong>
+                                </div>
+                                <div>
+                                    <span class="badge @(Model.IsSent ? "bg-success" : "bg-warning")">
+                                        <i class="bi @(Model.IsSent ? "bi-check-circle" : "bi-hourglass-split") me-1"></i>
+                                        @(Model.IsSent ? "ارسال شده" : "ارسال نشده")
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="info-box bg-light rounded p-3">
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="bi bi-person text-primary me-2"></i>
+                                    <strong>مسئول پیگیری</strong>
+                                </div>
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-person-circle text-primary me-2"></i>
+                                    @(Model.AssignedTo?.FullName ?? "تعیین نشده")
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="info-box bg-light rounded p-3">
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="bi bi-person text-primary me-2"></i>
+                                    <strong>ایجادکننده</strong>
+                                </div>
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-person-circle text-primary me-2"></i>
+                                    @(Model.Creator?.FullName ?? "-")
+                                </div>
+                                <small class="text-muted">@Model.CreationDate.ToString("yyyy/MM/dd HH:mm")</small>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="info-box bg-light rounded p-3">
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="bi bi-clock text-primary me-2"></i>
+                                    <strong>آخرین بروزرسانی</strong>
+                                </div>
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-clock-history text-primary me-2"></i>
+                                    @Model.CreationDate.ToString("yyyy/MM/dd HH:mm")
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="info-box bg-light rounded p-3">
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="bi bi-card-text text-primary me-2"></i>
+                                    <strong>توضیحات</strong>
+                                </div>
+                                <div class="text-muted">
+                                    @if (!string.IsNullOrEmpty(Model.BaseDocument?.Description))
+                                    {
+                                        <i class="bi bi-card-text me-1"></i>
+                                        @Model.BaseDocument.Description
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">بدون توضیحات</span>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- وضعیت و اقدامات -->
+        <div class="col-lg-4 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body p-4">
+                    <h5 class="card-title d-flex align-items-center mb-4">
+                        <i class="bi bi-clipboard-check-fill text-info me-2"></i>
+                        وضعیت و اقدامات
+                    </h5>
+
+                    <div class="row g-4">
+                        <div class="col-12">
+                            <div class="info-box bg-light rounded p-3">
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="bi bi-graph-up text-primary me-2"></i>
+                                    <strong>پیشرفت</strong>
+                                </div>
+                                <div class="progress" style="height: 25px;" data-bs-toggle="tooltip" title="@Model.Progress%">
+                                    <div class="progress-bar progress-bar-striped bg-primary" role="progressbar" style="width: @Model.Progress%;" aria-valuenow="@Model.Progress" aria-valuemin="0" aria-valuemax="100">
+                                        @Model.Progress%
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="info-box bg-light rounded p-3">
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="bi bi-paperclip text-primary me-2"></i>
+                                    <strong>پیوست‌ها</strong>
+                                </div>
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-file-earmark text-primary me-2"></i>
+                                    <div class="h4 mb-0">@Model.Attachments.Count</div>
+                                    <small class="text-muted ms-2">فایل پیوست</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="info-box bg-light rounded p-3">
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="bi bi-clock-history text-primary me-2"></i>
+                                    <strong>تراکنش‌ها</strong>
+                                </div>
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-arrow-repeat text-primary me-2"></i>
+                                    <div class="h4 mb-0">@Model.Transactions.Count</div>
+                                    <small class="text-muted ms-2">تراکنش ثبت شده</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="d-grid gap-2">
+                                @if (!Model.IsSent)
+                                {
+                                    <a asp-action="EditVersion" asp-route-id="@Model.Id" class="btn btn-primary">
+                                        <i class="bi bi-pencil-square me-1"></i>
+                                        ویرایش نسخه
+                                    </a>
+                                }
+                                <a asp-action="Details" asp-route-id="@Model.BaseDocumentId" class="btn btn-outline-secondary">
+                                    <i class="bi bi-arrow-right me-1"></i>
+                                    بازگشت به سند
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- پیوست‌ها -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-body p-4">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h5 class="card-title d-flex align-items-center mb-0">
+                    <i class="bi bi-paperclip text-primary me-2"></i>
+                    پیوست‌ها
+                    <span class="badge bg-primary ms-2">@Model.Attachments.Count</span>
+                </h5>
+                @if (!Model.IsSent)
+                {
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addAttachmentModal">
+                        <i class="bi bi-plus-circle me-1"></i>
+                        افزودن پیوست
+                    </button>
+                }
+            </div>
+
+            @if (Model.Attachments.Any())
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0" id="attachmentsTable">
+                        <thead class="table-light">
+                            <tr>
+                                <th>نام فایل</th>
+                                <th class="text-center">نوع فایل</th>
+                                <th class="text-center">حجم</th>
+                                <th>آپلودکننده</th>
+                                <th class="text-center">تاریخ آپلود</th>
+                                <th class="text-center no-sort" style="width: 100px;">عملیات</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var attachment in Model.Attachments.OrderByDescending(a => a.UploadDate))
+                            {
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <i class="bi bi-file-earmark text-primary me-2"></i>
+                                            @attachment.FileName
+                                        </div>
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="badge bg-secondary">@attachment.ContentType</span>
+                                    </td>
+                                    <td class="text-center">@(attachment.FileSize / 1024) KB</td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <i class="bi bi-person text-primary me-2"></i>
+                                            @attachment.Uploader?.FullName
+                                        </div>
+                                    </td>
+                                    <td class="text-center small">@(attachment.UploadDate.ToString("yyyy/MM/dd"))</td>
+                                    <td class="text-center">
+                                        <div class="btn-group btn-group-sm">
+                                            <a href="@Url.Action("DownloadAttachment", "Document", new { id = attachment.Id })" class="btn btn-outline-primary" data-bs-toggle="tooltip" title="دانلود فایل">
+                                                <i class="bi bi-download"></i>
+                                            </a>
+                                            @if (!Model.IsSent)
+                                            {
+                                                <a href="@Url.Action("DeleteAttachment", "Document", new { id = attachment.Id })" class="btn btn-outline-danger" data-bs-toggle="tooltip" title="حذف فایل" onclick="return confirm('آیا از حذف این فایل اطمینان دارید؟')">
+                                                    <i class="bi bi-trash"></i>
+                                                </a>
+                                            }
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-secondary text-center">
+                    <i class="bi bi-info-circle me-2"></i>
+                    هیچ پیوستی برای این نسخه ثبت نشده است.
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- تراکنش‌ها -->
+    @if (Model.Transactions.Any())
+    {
+        <div class="card shadow-sm">
+            <div class="card-body p-4">
+                <h5 class="card-title d-flex align-items-center mb-4">
+                    <i class="bi bi-clock-history text-primary me-2"></i>
+                    تراکنش‌ها
+                    <span class="badge bg-primary ms-2">@Model.Transactions.Count</span>
+                </h5>
+
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0" id="transactionsTable">
+                        <thead class="table-light">
+                            <tr>
+                                <th>نوع تراکنش</th>
+                                <th>توضیحات</th>
+                                <th>انجام دهنده</th>
+                                <th class="text-center">تاریخ</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var transaction in Model.Transactions.OrderByDescending(t => t.TransactionDate))
+                            {
+                                <tr>
+                                    <td>
+                                        <span class="badge @(transaction.ExternalTransactionNumber != null ? "bg-info" : "bg-success")">
+                                            <i class="bi @(transaction.ExternalTransactionNumber != null ? "bi-arrow-repeat" : "bi-check-circle") me-1"></i>
+                                            @(transaction.ExternalTransactionNumber != null ? "خارجی" : "داخلی")
+                                        </span>
+                                    </td>
+                                    <td>@(transaction.CommentSheet ?? "بدون توضیحات")</td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <i class="bi bi-person text-primary me-2"></i>
+                                            @(transaction.DocumentVersion?.Creator?.FullName ?? "نامشخص")
+                                        </div>
+                                    </td>
+                                    <td class="text-center">@transaction.TransactionDate.ToString("yyyy/MM/dd HH:mm")</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<!-- مودال افزودن پیوست -->
+<div class="modal fade" id="addAttachmentModal" tabindex="-1" aria-labelledby="addAttachmentModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form asp-action="AddAttachment" method="post" enctype="multipart/form-data">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addAttachmentModalLabel">
+                        <i class="bi bi-plus-circle text-primary me-2"></i>
+                        افزودن پیوست جدید
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="versionId" value="@Model.Id" />
+                    <div class="mb-3">
+                        <label for="file" class="form-label">فایل</label>
+                        <input type="file" class="form-control" id="file" name="file" required>
+                        <div class="form-text">حداکثر حجم فایل: 10 مگابایت</div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="description" class="form-label">توضیحات</label>
+                        <textarea class="form-control" id="description" name="description" rows="3"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                        <i class="bi bi-x-circle me-1"></i>
+                        انصراف
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check-circle me-1"></i>
+                        افزودن
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // فعال‌سازی تولتیپ‌ها
+            const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl, {
+                    placement: 'top'
+                });
+            });
+
+            // فعال‌سازی جداول
+            $('#attachmentsTable').DataTable({
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/fa.json'
+                },
+                order: [[4, 'desc']],
+                columnDefs: [
+                    { targets: 'no-sort', orderable: false }
+                ],
+                pageLength: 10,
+                responsive: true
+            });
+
+            $('#transactionsTable').DataTable({
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/fa.json'
+                },
+                order: [[3, 'desc']],
+                pageLength: 10,
+                responsive: true
+            });
+        });
+    </script>
+}
+
+<style>
+    .bg-primary-soft { background-color: rgba(var(--bs-primary-rgb), 0.1); }
+    .bg-success-soft { background-color: rgba(var(--bs-success-rgb), 0.1); }
+    .bg-info-soft { background-color: rgba(var(--bs-info-rgb), 0.1); }
+    .bg-warning-soft { background-color: rgba(var(--bs-warning-rgb), 0.1); }
+    .bg-danger-soft { background-color: rgba(var(--bs-danger-rgb), 0.1); }
+    .bg-secondary-soft { background-color: rgba(var(--bs-secondary-rgb), 0.1); }
+
+    .info-box {
+        transition: all 0.3s ease;
+    }
+    .info-box:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    }
+
+    .icon-box {
+        transition: all 0.3s ease;
+    }
+    .icon-box:hover {
+        transform: scale(1.05);
+    }
+
+    .dt-compact dd, .dt-compact dt {
+        padding-top: 0.3rem;
+        padding-bottom: 0.3rem;
+        margin-bottom: 0.5rem;
+    }
+</style> 

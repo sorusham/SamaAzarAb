@@ -1,0 +1,152 @@
+@model MessageForAzarab.Models.ApplicationUser
+
+@{
+    ViewData["Title"] = "ویرایش کاربر";
+}
+
+<div class="container fade-in">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="bi bi-pencil-square me-2"></i>
+                        ویرایش اطلاعات کاربر
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Edit" method="post">
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+                        <input type="hidden" asp-for="Id" />
+
+                        <div class="mb-3 row">
+                            <label asp-for="UserName" class="col-sm-3 col-form-label text-md-end">نام کاربری</label>
+                            <div class="col-sm-9">
+                                <input asp-for="UserName" class="form-control" />
+                                <span asp-validation-for="UserName" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-3 row">
+                            <label asp-for="Email" class="col-sm-3 col-form-label text-md-end">ایمیل</label>
+                            <div class="col-sm-9">
+                                <input asp-for="Email" class="form-control" />
+                                <span asp-validation-for="Email" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-3 row">
+                            <label asp-for="FullName" class="col-sm-3 col-form-label text-md-end">نام کامل</label>
+                            <div class="col-sm-9">
+                                <input asp-for="FullName" class="form-control" />
+                                <span asp-validation-for="FullName" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-3 row">
+                            <label asp-for="PhoneNumber" class="col-sm-3 col-form-label text-md-end">شماره تماس</label>
+                            <div class="col-sm-9">
+                                <input asp-for="PhoneNumber" class="form-control" />
+                                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-3 row">
+                            <label asp-for="PhoneNumber2" class="col-sm-3 col-form-label text-md-end">شماره تماس ثانویه</label>
+                            <div class="col-sm-9">
+                                <input asp-for="PhoneNumber2" class="form-control" />
+                                <span asp-validation-for="PhoneNumber2" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-3 row">
+                            <label asp-for="Address" class="col-sm-3 col-form-label text-md-end">آدرس</label>
+                            <div class="col-sm-9">
+                                <textarea asp-for="Address" class="form-control" rows="3"></textarea>
+                                <span asp-validation-for="Address" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-3 row">
+                            <label asp-for="UserType" class="col-sm-3 col-form-label text-md-end">نوع کاربر</label>
+                            <div class="col-sm-9">
+                                <select asp-for="UserType" class="form-select">
+                                    <option value="@MessageForAzarab.Models.UserType.Expert">کارشناس</option>
+                                    <option value="@MessageForAzarab.Models.UserType.Company">شرکت</option>
+                                    <option value="@MessageForAzarab.Models.UserType.BusinessMember">عضو بازرگانی</option>
+                                </select>
+                                <span asp-validation-for="UserType" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-3 row" id="companyNameRow">
+                            <label asp-for="CompanyName" class="col-sm-3 col-form-label text-md-end">نام شرکت</label>
+                            <div class="col-sm-9">
+                                <input asp-for="CompanyName" class="form-control" />
+                                <span asp-validation-for="CompanyName" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-3 row">
+                            <label asp-for="Description" class="col-sm-3 col-form-label text-md-end">توضیحات</label>
+                            <div class="col-sm-9">
+                                <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+                                <span asp-validation-for="Description" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-3 row">
+                            <label asp-for="IsActive" class="col-sm-3 col-form-label text-md-end">وضعیت</label>
+                            <div class="col-sm-9">
+                                <div class="form-check form-switch">
+                                    <input asp-for="IsActive" class="form-check-input" role="switch" />
+                                    <label class="form-check-label" for="IsActive">فعال</label>
+                                </div>
+                                <span asp-validation-for="IsActive" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check-lg me-1"></i>
+                                ذخیره تغییرات
+                            </button>
+                            <a asp-action="Index" class="btn btn-outline-secondary">
+                                <i class="bi bi-x-lg me-1"></i>
+                                انصراف
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    
+    <script>
+        $(document).ready(function() {
+            // تابع نمایش/مخفی کردن فیلد نام شرکت بر اساس نوع کاربر
+            function toggleCompanyNameField() {
+                var userType = $('#UserType').val();
+                if (userType == '@((int)MessageForAzarab.Models.UserType.Company)') {
+                    $('#companyNameRow').show();
+                } else {
+                    $('#companyNameRow').hide();
+                }
+            }
+            
+            // فراخوانی تابع در هنگام بارگذاری صفحه
+            toggleCompanyNameField();
+            
+            // فراخوانی تابع هنگام تغییر نوع کاربر
+            $('#UserType').change(function() {
+                toggleCompanyNameField();
+            });
+        });
+    </script>
+} 
