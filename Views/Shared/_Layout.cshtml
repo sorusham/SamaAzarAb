@@ -1,0 +1,443 @@
+﻿<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - سیستم مدیریت مدارک مهندسی</title>
+    
+    <!-- استایل‌های اصلی -->
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.rtl.min.css" />
+    <link rel="stylesheet" href="~/css/custom-styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/MessageForAzarab.styles.css" asp-append-version="true" />
+    
+    <!-- آیکون‌ها و فونت‌ها -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazir-font@v30.1.0/dist/font-face.css" rel="stylesheet" type="text/css" />
+    
+    <!-- دیتاتیبل -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.bootstrap5.min.css" />
+    
+    <!-- تنظیم تم -->
+    <script>
+        // تابع برای اعمال تم
+        function applyTheme(theme) {
+            document.documentElement.classList.remove('light-theme', 'dark-theme');
+            document.documentElement.classList.add(`${theme}-theme`);
+            localStorage.setItem('theme', theme);
+
+            // آیکون دکمه تم را بروزرسانی می‌کنیم
+            const themeToggle = document.getElementById('theme-toggle');
+            if (themeToggle) {
+                 const darkIcon = themeToggle.querySelector('.theme-icon-dark');
+                 const lightIcon = themeToggle.querySelector('.theme-icon-light');
+                 if(theme === 'dark') {
+                     darkIcon.style.display = 'none';
+                     lightIcon.style.display = 'inline-block';
+                 } else {
+                     darkIcon.style.display = 'inline-block';
+                     lightIcon.style.display = 'none';
+                 }
+            }
+        }
+
+        // خواندن تم ذخیره شده یا استفاده از پیش‌فرض (مثلا روشن)
+        const savedTheme = localStorage.getItem('theme') || 'light'; // تغییر پیش‌فرض به روشن
+        applyTheme(savedTheme);
+    </script>
+    <style>
+        :root {
+            --bs-body-bg-rgb: 248, 249, 252; /* F8F9FC - Default Light */
+             --bs-body-color-rgb: 33, 37, 41; /* Default text */
+             --bs-border-color-rgb: 222, 226, 230;
+             --card-bg-rgb: 255, 255, 255;
+             --navbar-bg-rgb: 255, 255, 255;
+             --footer-bg-rgb: 248, 249, 250;
+             --footer-text-rgb: 108, 117, 125;
+             --primary-color: #4e73df; /* SB Admin 2 Primary */
+             --secondary-color: #858796;
+             --success-color: #1cc88a;
+             --info-color: #36b9cc;
+             --warning-color: #f6c23e;
+             --danger-color: #e74a3b;
+             --light-color: #f8f9fc;
+             --dark-color: #5a5c69;
+             --link-color: var(--primary-color);
+        }
+
+        .dark-theme {
+             --bs-body-bg-rgb: 45, 48, 53; /* Darker Background */
+             --bs-body-color-rgb: 222, 226, 230; /* Lighter Text */
+             --bs-border-color-rgb: 73, 80, 87;
+             --card-bg-rgb: 52, 58, 64; /* Dark Card */
+             --navbar-bg-rgb: 33, 37, 41; /* Dark Navbar */
+             --footer-bg-rgb: 33, 37, 41;
+             --footer-text-rgb: 173, 181, 189;
+             --link-color: #6ea8fe; /* Lighter blue links */
+        }
+
+        body {
+            background-color: rgb(var(--bs-body-bg-rgb));
+            color: rgb(var(--bs-body-color-rgb));
+            font-family: 'Vazir', sans-serif;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        .navbar {
+            background-color: rgb(var(--navbar-bg-rgb)) !important; /* Important for override */
+            transition: background-color 0.3s ease;
+        }
+         .navbar .nav-link, .navbar .navbar-brand, .dropdown-item {
+             color: rgb(var(--bs-body-color-rgb)) !important;
+             transition: color 0.3s ease;
+         }
+         .navbar .nav-link:hover, .navbar .navbar-brand:hover, .dropdown-item:hover {
+              color: var(--primary-color) !important;
+         }
+         .navbar .nav-link.active {
+              font-weight: bold;
+              color: var(--primary-color) !important;
+         }
+         .dropdown-menu {
+             background-color: rgb(var(--card-bg-rgb));
+             border-color: rgb(var(--bs-border-color-rgb));
+         }
+
+         .footer {
+            background-color: rgb(var(--footer-bg-rgb));
+            color: rgb(var(--footer-text-rgb));
+            transition: background-color 0.3s ease, color 0.3s ease;
+         }
+         .footer a {
+             color: var(--link-color);
+         }
+
+         .card {
+              background-color: rgb(var(--card-bg-rgb)) !important;
+              border-color: rgb(var(--bs-border-color-rgb));
+              transition: background-color 0.3s ease;
+         }
+          .card-header {
+             background-color: rgba(var(--bs-body-bg-rgb), 0.5);
+             border-bottom-color: rgb(var(--bs-border-color-rgb));
+          }
+
+         /* Style the theme toggle button */
+         #theme-toggle {
+            border-color: rgb(var(--bs-border-color-rgb));
+            color: rgb(var(--bs-body-color-rgb));
+         }
+         #theme-toggle:hover {
+            background-color: rgba(var(--bs-body-color-rgb), 0.1);
+         }
+         .theme-icon-dark, .theme-icon-light { transition: display 0.1s ease; } /* Smooth icon swap */
+
+         /* Override Bootstrap default colors with our theme colors */
+         .text-primary { color: var(--primary-color) !important; }
+         .text-secondary { color: var(--secondary-color) !important; }
+         .text-success { color: var(--success-color) !important; }
+         .text-info { color: var(--info-color) !important; }
+         .text-warning { color: var(--warning-color) !important; }
+         .text-danger { color: var(--danger-color) !important; }
+         .text-light { color: var(--light-color) !important; }
+         .text-dark { color: var(--dark-color) !important; }
+         .text-muted { color: var(--secondary-color) !important; opacity: 0.75; }
+
+         .bg-primary { background-color: var(--primary-color) !important; }
+         .bg-secondary { background-color: var(--secondary-color) !important; }
+         .bg-success { background-color: var(--success-color) !important; }
+         .bg-info { background-color: var(--info-color) !important; }
+         .bg-warning { background-color: var(--warning-color) !important; }
+         .bg-danger { background-color: var(--danger-color) !important; }
+         .bg-light { background-color: var(--light-color) !important; }
+         .bg-dark { background-color: var(--dark-color) !important; }
+
+         .btn-primary { background-color: var(--primary-color); border-color: var(--primary-color); }
+         .btn-primary:hover { filter: brightness(90%); }
+         .btn-outline-primary { color: var(--primary-color); border-color: var(--primary-color); }
+         .btn-outline-primary:hover { background-color: var(--primary-color); color: white; }
+         /* ... define similar overrides for other btn types (secondary, success etc.) ... */
+         .btn-success { background-color: var(--success-color); border-color: var(--success-color); }
+         .btn-success:hover { filter: brightness(90%); }
+         .btn-info { background-color: var(--info-color); border-color: var(--info-color); }
+         .btn-info:hover { filter: brightness(90%); }
+         .btn-warning { background-color: var(--warning-color); border-color: var(--warning-color); }
+         .btn-warning:hover { filter: brightness(90%); }
+         .btn-danger { background-color: var(--danger-color); border-color: var(--danger-color); }
+         .btn-danger:hover { filter: brightness(90%); }
+         .btn-secondary { background-color: var(--secondary-color); border-color: var(--secondary-color); }
+         .btn-secondary:hover { filter: brightness(90%); }
+         .btn-outline-secondary { color: var(--secondary-color); border-color: var(--secondary-color); }
+         .btn-outline-secondary:hover { background-color: var(--secondary-color); color: white; }
+
+
+         .alert { border: none; } /* Remove default border */
+         .alert-success { background-color: rgba(var(--success-color-rgb), 0.15); color: var(--success-color); }
+         /* ... Define similar styles for other alert types ... */
+
+    </style>
+</head>
+
+<body>
+    <!-- هدر و منوی اصلی -->
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm mb-4">
+            <div class="container-fluid">
+                <a class="navbar-brand fw-bold" asp-controller="Home" asp-action="Index">
+                    <i class="bi bi-boxes me-1 text-primary"></i> سیستم مدیریت مدارک
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                
+                <div class="navbar-collapse collapse">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Home" ? "active" : "")" asp-controller="Home" asp-action="Index">
+                                <i class="bi bi-house-door me-1"></i> خانه
+                            </a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Document" ? "active" : "")" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-file-earmark-text me-1"></i> مدارک
+                            </a>
+                            <ul class="dropdown-menu shadow-sm">
+                                <li>
+                                    <a class="dropdown-item" asp-controller="Document" asp-action="Index">
+                                        <i class="bi bi-list-ul me-2"></i> لیست مدارک
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" asp-controller="Document" asp-action="Create">
+                                        <i class="bi bi-file-earmark-plus me-2"></i> ثبت مدرک جدید
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        @if (User.IsInRole("Admin") || User.IsInRole("DCC"))
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle @(IsManagementActive(ViewContext) ? "active" : "")" href="#" id="adminDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="bi bi-gear me-1"></i> مدیریت سیستم
+                                </a>
+                                <ul class="dropdown-menu shadow-sm" aria-labelledby="adminDropdown">
+                                    <li><h6 class="dropdown-header">مدیریت دسترسی</h6></li>
+                                    <li>
+                                        <a class="dropdown-item @(IsActive(ViewContext, "Users"))" asp-controller="Users" asp-action="Index">
+                                            <i class="bi bi-people me-2"></i> کاربران
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item @(IsActive(ViewContext, "Roles"))" asp-controller="Roles" asp-action="Index">
+                                            <i class="bi bi-shield-lock me-2"></i> نقش‌ها
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" asp-area="Identity" asp-page="/Account/Register">
+                                            <i class="bi bi-person-plus me-2"></i> ثبت‌نام کاربر جدید
+                                        </a>
+                                    </li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><h6 class="dropdown-header">مدیریت داده‌ها</h6></li>
+                                    <li>
+                                        <a class="dropdown-item @(IsActive(ViewContext, "Departments"))" asp-controller="Departments" asp-action="Index">
+                                            <i class="bi bi-building me-2"></i> دپارتمان‌ها
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item @(IsActive(ViewContext, "Projects"))" asp-controller="Projects" asp-action="Index">
+                                            <i class="bi bi-folder me-2"></i> پروژه‌ها
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item @(IsActive(ViewContext, "Admin", "UploadExcel"))" asp-controller="Admin" asp-action="UploadExcel">
+                                            <i class="bi bi-file-earmark-arrow-up me-2"></i> آپلود دسته‌ای اسناد (اکسل)
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                        }
+                    </ul>
+                    
+                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-center">
+                        <li class="nav-item dropdown">
+                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                 <i class="bi bi-person-circle me-1 fs-5"></i>
+                                 <span class="d-none d-lg-inline small">@User.Identity?.Name</span>
+                             </a>
+                             <ul class="dropdown-menu dropdown-menu-end shadow-sm" aria-labelledby="userDropdown">
+                                 <li>
+                                     <a class="dropdown-item @(IsActive(ViewContext, "Profile"))" asp-controller="Profile" asp-action="Index">
+                                         <i class="bi bi-person-badge me-2"></i> پروفایل من
+                                     </a>
+                                 </li>
+                                 <li>
+                                     <a class="dropdown-item @(IsActive(ViewContext, "Notifications"))" asp-controller="Notifications" asp-action="Index">
+                                         <i class="bi bi-bell me-2"></i> اعلان‌ها
+                                         <span id="notificationCounter" class="badge rounded-pill bg-danger ms-1">
+                                             <span id="notificationCount">0</span>
+                                         </span>
+                                     </a>
+                                 </li>
+                                 <li><hr class="dropdown-divider"></li>
+                                 <li><partial name="_LoginPartial" /></li>
+                             </ul>
+                        </li>
+                        <li class="nav-item ms-2">
+                            <button id="theme-toggle" class="btn btn-outline-secondary btn-sm border-0" data-bs-toggle="tooltip" data-bs-placement="bottom" title="تغییر تم روشن/تاریک">
+                                <i class="bi bi-moon-stars-fill theme-icon-dark"></i>
+                                <i class="bi bi-sun-fill theme-icon-light"></i>
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- بخش اصلی محتوا -->
+    <div class="container-fluid pb-4">
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show rounded-3 shadow-sm mb-4" role="alert">
+                <i class="bi bi-check-circle-fill me-2"></i> @Html.Raw(TempData["SuccessMessage"])
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+        
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show rounded-3 shadow-sm mb-4" role="alert">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i> @Html.Raw(TempData["ErrorMessage"])
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+        
+        @if (TempData["WarningMessage"] != null)
+        {
+             <div class="alert alert-warning alert-dismissible fade show rounded-3 shadow-sm mb-4" role="alert">
+                 <i class="bi bi-exclamation-triangle-fill me-2"></i> @Html.Raw(TempData["WarningMessage"])
+                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+             </div>
+        }
+        
+        @if (TempData["InfoMessage"] != null)
+        {
+            <div class="alert alert-info alert-dismissible fade show rounded-3 shadow-sm mb-4" role="alert">
+                <i class="bi bi-info-circle-fill me-2"></i> @Html.Raw(TempData["InfoMessage"])
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+        
+        <main role="main">
+            @RenderBody()
+        </main>
+    </div>
+
+    
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.5.0/js/responsive.bootstrap5.min.js"></script>
+    <script src="~/lib/datatables/fa.json"></script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            function applyTheme(theme) {
+                document.documentElement.classList.remove('light-theme', 'dark-theme');
+                document.documentElement.classList.add(`${theme}-theme`);
+                localStorage.setItem('theme', theme);
+
+                const themeToggle = document.getElementById('theme-toggle');
+                if (themeToggle) {
+                     const darkIcon = themeToggle.querySelector('.theme-icon-dark');
+                     const lightIcon = themeToggle.querySelector('.theme-icon-light');
+                     if(theme === 'dark') {
+                         darkIcon.style.display = 'none';
+                         lightIcon.style.display = 'inline-block';
+                     } else {
+                         darkIcon.style.display = 'inline-block';
+                         lightIcon.style.display = 'none';
+                     }
+                }
+            }
+            const currentTheme = localStorage.getItem('theme') || 'light';
+            applyTheme(currentTheme);
+
+            const themeToggle = document.getElementById('theme-toggle');
+            if(themeToggle) {
+                themeToggle.addEventListener('click', function() {
+                    const newTheme = document.documentElement.classList.contains('dark-theme') ? 'light' : 'dark';
+                    applyTheme(newTheme);
+                });
+            }
+
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+
+            var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
+            popoverTriggerList.map(function (popoverTriggerEl) {
+                return new bootstrap.Popover(popoverTriggerEl);
+            });
+
+            if ($.fn.dataTable) {
+                $.extend(true, $.fn.dataTable.defaults, {
+                    language: {
+                        url: '/lib/datatables/fa.json'
+                    },
+                    responsive: true,
+                    pageLength: 10,
+                    lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "همه"]],
+                });
+            }
+
+            function fetchNotificationCount() {
+                const countElement = document.getElementById('notificationCount');
+                const counterElement = document.getElementById('notificationCounter');
+                const simulatedCount = 0;
+                if(countElement && counterElement) {
+                    countElement.innerText = simulatedCount;
+                     if (simulatedCount > 0) {
+                         counterElement.style.display = 'inline-flex';
+                         counterElement.classList.remove('d-none');
+                     } else {
+                         counterElement.style.display = 'none';
+                         counterElement.classList.add('d-none');
+                     }
+                }
+            }
+            fetchNotificationCount();
+
+        });
+    </script>
+    
+    @* توابع کمکی برای کلاس active منو *@
+    @{
+        bool IsActive(ViewContext context, string controller, string action = "")
+        {
+            var currentController = context.RouteData.Values["Controller"]?.ToString() ?? string.Empty;
+            var currentAction = context.RouteData.Values["Action"]?.ToString() ?? string.Empty;
+            return string.Equals(currentController, controller, StringComparison.OrdinalIgnoreCase) &&
+                   (action == "" || string.Equals(currentAction, action, StringComparison.OrdinalIgnoreCase));
+        }
+
+        bool IsManagementActive(ViewContext context)
+        {
+            var currentController = context.RouteData.Values["Controller"]?.ToString() ?? string.Empty;
+            string[] managementControllers = { "Users", "Roles", "Departments", "Projects", "Admin" };
+            return managementControllers.Contains(currentController, StringComparer.OrdinalIgnoreCase) ||
+                   (string.Equals(context.RouteData.Values["Area"]?.ToString() ?? string.Empty, "Identity", StringComparison.OrdinalIgnoreCase) &&
+                    string.Equals(context.RouteData.Values["Page"]?.ToString() ?? string.Empty, "/Account/Register", StringComparison.OrdinalIgnoreCase));
+        }
+    }
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

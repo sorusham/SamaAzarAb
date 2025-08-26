@@ -1,0 +1,112 @@
+@model IEnumerable<MessageForAzarab.Models.ApplicationUser>
+
+@{
+    ViewData["Title"] = "مدیریت کاربران";
+}
+
+<div class="container fade-in">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mt-2">
+            <i class="bi bi-people-fill text-primary"></i>
+            مدیریت کاربران سیستم
+        </h2>
+        <a asp-area="Identity" asp-page="/Account/Register" class="btn btn-success">
+            <i class="bi bi-person-plus-fill"></i>
+            ثبت‌نام کاربر جدید
+        </a>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-header bg-light">
+            <h5 class="mb-0">لیست کاربران</h5>
+        </div>
+        <div class="card-body">
+            @if (Model.Any())
+            {
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>نام کاربری</th>
+                                <th>نام کامل</th>
+                                <th>ایمیل</th>
+                                <th>شماره تماس</th>
+                                <th>نوع کاربر</th>
+                                <th>وضعیت</th>
+                                <th class="text-center">عملیات</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var user in Model)
+                            {
+                                <tr>
+                                    <td>@user.UserName</td>
+                                    <td>@user.FullName</td>
+                                    <td>@user.Email</td>
+                                    <td>@user.PhoneNumber</td>
+                                    <td>
+                                        @switch (user.UserType)
+                                        {
+                                            case MessageForAzarab.Models.UserType.Expert:
+                                                <span class="badge bg-info">کارشناس</span>
+                                                break;
+                                            case MessageForAzarab.Models.UserType.Company:
+                                                <span class="badge bg-primary">شرکت</span>
+                                                break;
+                                            case MessageForAzarab.Models.UserType.BusinessMember:
+                                                <span class="badge bg-success">عضو بازرگانی</span>
+                                                break;
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (user.IsActive)
+                                        {
+                                            <span class="badge bg-success">فعال</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-danger">غیرفعال</span>
+                                        }
+                                    </td>
+                                    <td class="text-center">
+                                        <div class="btn-group">
+                                            <a asp-action="Details" asp-route-id="@user.Id" class="btn btn-sm btn-outline-primary">
+                                                <i class="bi bi-info-circle-fill"></i>
+                                                جزئیات
+                                            </a>
+                                            <a asp-action="Edit" asp-route-id="@user.Id" class="btn btn-sm btn-outline-secondary">
+                                                <i class="bi bi-pencil-fill"></i>
+                                                ویرایش
+                                            </a>
+                                            <a asp-action="ChangePassword" asp-route-id="@user.Id" class="btn btn-sm btn-outline-info">
+                                                <i class="bi bi-key-fill"></i>
+                                                تغییر رمز
+                                            </a>
+                                            <form asp-action="ToggleActive" asp-route-id="@user.Id" method="post" class="d-inline">
+                                                <button type="submit" class="btn btn-sm @(user.IsActive ? "btn-outline-warning" : "btn-outline-success")">
+                                                    <i class="bi @(user.IsActive ? "bi-person-slash" : "bi-person-check-fill")"></i>
+                                                    @(user.IsActive ? "غیرفعال کردن" : "فعال کردن")
+                                                </button>
+                                            </form>
+                                            <a asp-action="Delete" asp-route-id="@user.Id" class="btn btn-sm btn-outline-danger">
+                                                <i class="bi bi-trash-fill"></i>
+                                                حذف
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-info">
+                    <i class="bi bi-info-circle-fill"></i>
+                    هیچ کاربری یافت نشد. با استفاده از دکمه «ثبت‌نام کاربر جدید» یک کاربر جدید ایجاد کنید.
+                </div>
+            }
+        </div>
+    </div>
+</div> 

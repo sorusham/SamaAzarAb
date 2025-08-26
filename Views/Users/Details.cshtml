@@ -1,0 +1,124 @@
+@model MessageForAzarab.Models.ApplicationUser
+
+@{
+    ViewData["Title"] = "جزئیات کاربر";
+}
+
+<div class="container fade-in">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="bi bi-person-badge-fill me-2"></i>
+                        جزئیات کاربر
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-4">
+                        <div class="col-md-3 text-md-end fw-bold">شناسه کاربر:</div>
+                        <div class="col-md-9">@Model.Id</div>
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-md-3 text-md-end fw-bold">نام کاربری:</div>
+                        <div class="col-md-9">@Model.UserName</div>
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-md-3 text-md-end fw-bold">نام کامل:</div>
+                        <div class="col-md-9">@Model.FullName</div>
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-md-3 text-md-end fw-bold">ایمیل:</div>
+                        <div class="col-md-9">@Model.Email</div>
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-md-3 text-md-end fw-bold">شماره تماس:</div>
+                        <div class="col-md-9">@(string.IsNullOrEmpty(Model.PhoneNumber) ? "ثبت نشده" : Model.PhoneNumber)</div>
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-md-3 text-md-end fw-bold">شماره تماس ثانویه:</div>
+                        <div class="col-md-9">@(string.IsNullOrEmpty(Model.PhoneNumber2) ? "ثبت نشده" : Model.PhoneNumber2)</div>
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-md-3 text-md-end fw-bold">نوع کاربر:</div>
+                        <div class="col-md-9">
+                            @switch (Model.UserType)
+                            {
+                                case MessageForAzarab.Models.UserType.Expert:
+                                    <span class="badge bg-info">کارشناس</span>
+                                    break;
+                                case MessageForAzarab.Models.UserType.Company:
+                                    <span class="badge bg-primary">شرکت</span>
+                                    break;
+                                case MessageForAzarab.Models.UserType.BusinessMember:
+                                    <span class="badge bg-success">عضو بازرگانی</span>
+                                    break;
+                            }
+                        </div>
+                    </div>
+
+                    @if (Model.UserType == MessageForAzarab.Models.UserType.Company && !string.IsNullOrEmpty(Model.CompanyName))
+                    {
+                        <div class="row mb-4">
+                            <div class="col-md-3 text-md-end fw-bold">نام شرکت:</div>
+                            <div class="col-md-9">@Model.CompanyName</div>
+                        </div>
+                    }
+
+                    <div class="row mb-4">
+                        <div class="col-md-3 text-md-end fw-bold">آدرس:</div>
+                        <div class="col-md-9">@(string.IsNullOrEmpty(Model.Address) ? "ثبت نشده" : Model.Address)</div>
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-md-3 text-md-end fw-bold">توضیحات:</div>
+                        <div class="col-md-9">@(string.IsNullOrEmpty(Model.Description) ? "ثبت نشده" : Model.Description)</div>
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-md-3 text-md-end fw-bold">وضعیت کاربر:</div>
+                        <div class="col-md-9">
+                            @if (Model.IsActive)
+                            {
+                                <span class="badge bg-success">فعال</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-danger">غیرفعال</span>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-md-3 text-md-end fw-bold">تاریخ ثبت‌نام:</div>
+                        <div class="col-md-9">@Model.RegisterDate.ToString("yyyy/MM/dd HH:mm")</div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <div class="d-flex justify-content-between">
+                        <a asp-action="Index" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-return-right me-1"></i>
+                            بازگشت به لیست
+                        </a>
+                        <div>
+                            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">
+                                <i class="bi bi-pencil-fill me-1"></i>
+                                ویرایش
+                            </a>
+                            <a asp-action="ChangePassword" asp-route-id="@Model.Id" class="btn btn-info text-white">
+                                <i class="bi bi-key-fill me-1"></i>
+                                تغییر رمز عبور
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 

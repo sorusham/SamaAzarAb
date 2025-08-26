@@ -1,0 +1,369 @@
+{
+  "Files": [
+    {
+      "Id": "G:\\AAzarAAb\\MessageForAzarab\\obj\\Debug\\net9.0\\scopedcss\\projectbundle\\MessageForAzarab.bundle.scp.css",
+      "PackagePath": "staticwebassets\\MessageForAzarab.5mmusbzwo2.bundle.scp.css"
+    },
+    {
+      "Id": "G:\\AAzarAAb\\MessageForAzarab\\wwwroot\\MDR-ACA.XLS",
+      "PackagePath": "staticwebassets\\MDR-ACA.XLS"
+    },
+    {
+      "Id": "G:\\AAzarAAb\\MessageForAzarab\\wwwroot\\css\\site.css",
+      "PackagePath": "staticwebassets\\css\\site.css"
+    },
+    {
+      "Id": "G:\\AAzarAAb\\MessageForAzarab\\wwwroot\\favicon.ico",
+      "PackagePath": "staticwebassets\\favicon.ico"
+    },
+    {
+      "Id": "G:\\AAzarAAb\\MessageForAzarab\\wwwroot\\js\\site.js",
+      "PackagePath": "staticwebassets\\js\\site.js"
+    },
+    {
+      "Id": "G:\\AAzarAAb\\MessageForAzarab\\wwwroot\\lib\\bootstrap\\LICENSE",
+      "PackagePath": "staticwebassets\\lib\\bootstrap"
+    },
+    {
+      "Id": "G:\\AAzarAAb\\MessageForAzarab\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-grid.css",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-grid.css"
+    },
+    {
+      "Id": "G:\\AAzarAAb\\MessageForAzarab\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-grid.css.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-grid.css.map"
+    },
+    {
+      "Id": "G:\\AAzarAAb\\MessageForAzarab\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-grid.min.css",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-grid.min.css"
+    },
+    {
+      "Id": "G:\\AAzarAAb\\MessageForAzarab\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-grid.min.css.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-grid.min.css.map"
+    },
+    {
+      "Id": "G:\\AAzarAAb\\MessageForAzarab\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-grid.rtl.css",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-grid.rtl.css"
+    },
+    {
+      "Id": "G:\\AAzarAAb\\MessageForAzarab\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-grid.rtl.css.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-grid.rtl.css.map"
+    },
+    {
+      "Id": "G:\\AAzarAAb\\MessageForAzarab\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-grid.rtl.min.css",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-grid.rtl.min.css"
+    },
+    {
+      "Id": "G:\\AAzarAAb\\MessageForAzarab\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-grid.rtl.min.css.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-grid.rtl.min.css.map"
+    },
+    {
+      "Id": "G:\\AAzarAAb\\MessageForAzarab\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.css",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.css"
+    },
+    {
+      "Id": "G:\\AAzarAAb\\MessageForAzarab\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.css.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.css.map"
+    },
+    {
+      "Id": "G:\\AAzarAAb\\MessageForAzarab\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.min.css",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.min.css"
+    },
+    {
+      "Id": "G:\\AAzarAAb\\MessageForAzarab\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.min.css.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.min.css.map"
+    },
+    {
+      "Id": "G:\\AAzarAAb\\MessageForAzarab\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.rtl.css",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.rtl.css"
+    },
+    {
+      "Id": "G:\\AAzarAAb\\MessageForAzarab\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.rtl.css.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.rtl.css.map"
+    },
+    {
+      "Id": "G:\\AAzarAAb\\MessageForAzarab\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.rtl.min.css",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.rtl.min.css"
+    },
+    {
+      "Id": "G:\\AAzarAAb\\MessageForAzarab\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.rtl.min.css.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.rtl.min.css.map"
+    },
+    {
+      "Id": "G:\\AAzarAAb\\MessageForAzarab\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.css",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.css"
+    },
+    {
+      "Id": "G:\\AAzarAAb\\MessageForAzarab\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.css.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.css.map"
+    },
+    {
+      "Id": "G:\\AAzarAAb\\MessageForAzarab\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.min.css",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.min.css"
+    },
+    {
+      "Id": "G:\\AAzarAAb\\MessageForAzarab\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.min.css.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.min.css.map"
+    },
+    {
+      "Id": "G:\\AAzarAAb\\MessageForAzarab\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.rtl.css",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.rtl.css"
+    },
+    {
+      "Id": "G:\\AAzarAAb\\MessageForAzarab\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.rtl.css.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.rtl.css.map"
+    },
+    {
+      "Id": "G:\\AAzarAAb\\MessageForAzarab\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.rtl.min.css",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.rtl.min.css"
+    },
+    {
+      "Id": "G:\\AAzarAAb\\MessageForAzarab\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.rtl.min.css.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.rtl.min.css.map"
+    },
+    {
+      "Id": "G:\\AAzarAAb\\MessageForAzarab\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.css",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap.css"
+    },
+    {
+      "Id": "G:\\AAzarAAb\\MessageForAzarab\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.css.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap.css.map"
+    },
+    {
+      "Id": "G:\\AAzarAAb\\MessageForAzarab\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.min.css",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap.min.css"
+    },
+    {
+      "Id": "G:\\AAzarAAb\\MessageForAzarab\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.min.css.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap.min.css.map"
+    },
+    {
+      "Id": "G:\\AAzarAAb\\MessageForAzarab\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.rtl.css",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap.rtl.css"
+    },
+    {
+      "Id": "G:\\AAzarAAb\\MessageForAzarab\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.rtl.css.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap.rtl.css.map"
+    },
+    {
+      "Id": "G:\\AAzarAAb\\MessageForAzarab\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.rtl.min.css",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap.rtl.min.css"
+    },
+    {
+      "Id": "G:\\AAzarAAb\\MessageForAzarab\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.rtl.min.css.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap.rtl.min.css.map"
+    },
+    {
+      "Id": "G:\\AAzarAAb\\MessageForAzarab\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.bundle.js",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\js\\bootstrap.bundle.js"
+    },
+    {
+      "Id": "G:\\AAzarAAb\\MessageForAzarab\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.bundle.js.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\js\\bootstrap.bundle.js.map"
+    },
+    {
+      "Id": "G:\\AAzarAAb\\MessageForAzarab\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.bundle.min.js",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\js\\bootstrap.bundle.min.js"
+    },
+    {
+      "Id": "G:\\AAzarAAb\\MessageForAzarab\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.bundle.min.js.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\js\\bootstrap.bundle.min.js.map"
+    },
+    {
+      "Id": "G:\\AAzarAAb\\MessageForAzarab\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.esm.js",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\js\\bootstrap.esm.js"
+    },
+    {
+      "Id": "G:\\AAzarAAb\\MessageForAzarab\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.esm.js.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\js\\bootstrap.esm.js.map"
+    },
+    {
+      "Id": "G:\\AAzarAAb\\MessageForAzarab\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.esm.min.js",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\js\\bootstrap.esm.min.js"
+    },
+    {
+      "Id": "G:\\AAzarAAb\\MessageForAzarab\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.esm.min.js.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\js\\bootstrap.esm.min.js.map"
+    },
+    {
+      "Id": "G:\\AAzarAAb\\MessageForAzarab\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.js",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\js\\bootstrap.js"
+    },
+    {
+      "Id": "G:\\AAzarAAb\\MessageForAzarab\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.js.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\js\\bootstrap.js.map"
+    },
+    {
+      "Id": "G:\\AAzarAAb\\MessageForAzarab\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.min.js",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\js\\bootstrap.min.js"
+    },
+    {
+      "Id": "G:\\AAzarAAb\\MessageForAzarab\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.min.js.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\js\\bootstrap.min.js.map"
+    },
+    {
+      "Id": "G:\\AAzarAAb\\MessageForAzarab\\wwwroot\\lib\\datatables\\Persian.json",
+      "PackagePath": "staticwebassets\\lib\\datatables\\Persian.json"
+    },
+    {
+      "Id": "G:\\AAzarAAb\\MessageForAzarab\\wwwroot\\lib\\jquery-validation-unobtrusive\\LICENSE.txt",
+      "PackagePath": "staticwebassets\\lib\\jquery-validation-unobtrusive\\LICENSE.txt"
+    },
+    {
+      "Id": "G:\\AAzarAAb\\MessageForAzarab\\wwwroot\\lib\\jquery-validation-unobtrusive\\dist\\jquery.validate.unobtrusive.js",
+      "PackagePath": "staticwebassets\\lib\\jquery-validation-unobtrusive\\dist\\jquery.validate.unobtrusive.js"
+    },
+    {
+      "Id": "G:\\AAzarAAb\\MessageForAzarab\\wwwroot\\lib\\jquery-validation-unobtrusive\\dist\\jquery.validate.unobtrusive.min.js",
+      "PackagePath": "staticwebassets\\lib\\jquery-validation-unobtrusive\\dist\\jquery.validate.unobtrusive.min.js"
+    },
+    {
+      "Id": "G:\\AAzarAAb\\MessageForAzarab\\wwwroot\\lib\\jquery-validation\\LICENSE.md",
+      "PackagePath": "staticwebassets\\lib\\jquery-validation\\LICENSE.md"
+    },
+    {
+      "Id": "G:\\AAzarAAb\\MessageForAzarab\\wwwroot\\lib\\jquery-validation\\dist\\additional-methods.js",
+      "PackagePath": "staticwebassets\\lib\\jquery-validation\\dist\\additional-methods.js"
+    },
+    {
+      "Id": "G:\\AAzarAAb\\MessageForAzarab\\wwwroot\\lib\\jquery-validation\\dist\\additional-methods.min.js",
+      "PackagePath": "staticwebassets\\lib\\jquery-validation\\dist\\additional-methods.min.js"
+    },
+    {
+      "Id": "G:\\AAzarAAb\\MessageForAzarab\\wwwroot\\lib\\jquery-validation\\dist\\jquery.validate.js",
+      "PackagePath": "staticwebassets\\lib\\jquery-validation\\dist\\jquery.validate.js"
+    },
+    {
+      "Id": "G:\\AAzarAAb\\MessageForAzarab\\wwwroot\\lib\\jquery-validation\\dist\\jquery.validate.min.js",
+      "PackagePath": "staticwebassets\\lib\\jquery-validation\\dist\\jquery.validate.min.js"
+    },
+    {
+      "Id": "G:\\AAzarAAb\\MessageForAzarab\\wwwroot\\lib\\jquery\\LICENSE.txt",
+      "PackagePath": "staticwebassets\\lib\\jquery\\LICENSE.txt"
+    },
+    {
+      "Id": "G:\\AAzarAAb\\MessageForAzarab\\wwwroot\\lib\\jquery\\dist\\jquery.js",
+      "PackagePath": "staticwebassets\\lib\\jquery\\dist\\jquery.js"
+    },
+    {
+      "Id": "G:\\AAzarAAb\\MessageForAzarab\\wwwroot\\lib\\jquery\\dist\\jquery.min.js",
+      "PackagePath": "staticwebassets\\lib\\jquery\\dist\\jquery.min.js"
+    },
+    {
+      "Id": "G:\\AAzarAAb\\MessageForAzarab\\wwwroot\\lib\\jquery\\dist\\jquery.min.map",
+      "PackagePath": "staticwebassets\\lib\\jquery\\dist\\jquery.min.map"
+    },
+    {
+      "Id": "G:\\AAzarAAb\\MessageForAzarab\\wwwroot\\lib\\jquery\\dist\\jquery.slim.js",
+      "PackagePath": "staticwebassets\\lib\\jquery\\dist\\jquery.slim.js"
+    },
+    {
+      "Id": "G:\\AAzarAAb\\MessageForAzarab\\wwwroot\\lib\\jquery\\dist\\jquery.slim.min.js",
+      "PackagePath": "staticwebassets\\lib\\jquery\\dist\\jquery.slim.min.js"
+    },
+    {
+      "Id": "G:\\AAzarAAb\\MessageForAzarab\\wwwroot\\lib\\jquery\\dist\\jquery.slim.min.map",
+      "PackagePath": "staticwebassets\\lib\\jquery\\dist\\jquery.slim.min.map"
+    },
+    {
+      "Id": "G:\\AAzarAAb\\MessageForAzarab\\wwwroot\\uploads\\20250409-3308\\579b6943-c20e-4cff-9782-bc76927cc60f.PNG",
+      "PackagePath": "staticwebassets\\uploads\\20250409-3308\\579b6943-c20e-4cff-9782-bc76927cc60f.PNG"
+    },
+    {
+      "Id": "G:\\AAzarAAb\\MessageForAzarab\\wwwroot\\uploads\\20250409-3308\\81e4e17a-5df7-45a3-8b11-af464c3c1099.xlsx",
+      "PackagePath": "staticwebassets\\uploads\\20250409-3308\\81e4e17a-5df7-45a3-8b11-af464c3c1099.xlsx"
+    },
+    {
+      "Id": "G:\\AAzarAAb\\MessageForAzarab\\wwwroot\\uploads\\20250409-3308\\ab2d7b4b-ca80-453d-8882-8434d9b1714e.png",
+      "PackagePath": "staticwebassets\\uploads\\20250409-3308\\ab2d7b4b-ca80-453d-8882-8434d9b1714e.png"
+    },
+    {
+      "Id": "G:\\AAzarAAb\\MessageForAzarab\\wwwroot\\uploads\\20250409-3308\\f4acd7f4-8553-41ba-936c-38d51e73ea20.xlsx",
+      "PackagePath": "staticwebassets\\uploads\\20250409-3308\\f4acd7f4-8553-41ba-936c-38d51e73ea20.xlsx"
+    },
+    {
+      "Id": "G:\\AAzarAAb\\MessageForAzarab\\wwwroot\\uploads\\20250409-8890\\bf752b3d-4ad0-47dd-801c-8065c43fd746.xlsx",
+      "PackagePath": "staticwebassets\\uploads\\20250409-8890\\bf752b3d-4ad0-47dd-801c-8065c43fd746.xlsx"
+    },
+    {
+      "Id": "G:\\AAzarAAb\\MessageForAzarab\\wwwroot\\uploads\\20250416-2057\\0eccb981-0ab0-4b59-9d43-a3d18a419dfb.pem",
+      "PackagePath": "staticwebassets\\uploads\\20250416-2057\\0eccb981-0ab0-4b59-9d43-a3d18a419dfb.pem"
+    },
+    {
+      "Id": "G:\\AAzarAAb\\MessageForAzarab\\wwwroot\\uploads\\20250416-2057\\ec8b9d1e-0639-4fe2-bcb9-885baf4ba416.xlsx",
+      "PackagePath": "staticwebassets\\uploads\\20250416-2057\\ec8b9d1e-0639-4fe2-bcb9-885baf4ba416.xlsx"
+    },
+    {
+      "Id": "G:\\AAzarAAb\\MessageForAzarab\\wwwroot\\uploads\\20250416-2702\\95200af4-35b0-4a48-9e71-59d2e7190be5.xlsx",
+      "PackagePath": "staticwebassets\\uploads\\20250416-2702\\95200af4-35b0-4a48-9e71-59d2e7190be5.xlsx"
+    },
+    {
+      "Id": "G:\\AAzarAAb\\MessageForAzarab\\wwwroot\\uploads\\20250416-3086\\55c1c619-9ecc-4019-83ad-43a43b5a4859.xlsx",
+      "PackagePath": "staticwebassets\\uploads\\20250416-3086\\55c1c619-9ecc-4019-83ad-43a43b5a4859.xlsx"
+    },
+    {
+      "Id": "G:\\AAzarAAb\\MessageForAzarab\\wwwroot\\uploads\\20250416-5281\\7a262787-053f-4fdf-a212-bb20dbbcdfea.xlsx",
+      "PackagePath": "staticwebassets\\uploads\\20250416-5281\\7a262787-053f-4fdf-a212-bb20dbbcdfea.xlsx"
+    },
+    {
+      "Id": "G:\\AAzarAAb\\MessageForAzarab\\wwwroot\\uploads\\20250416-5281\\eab5f0f6-6c64-4e7b-bf50-be19e04f05e2.png",
+      "PackagePath": "staticwebassets\\uploads\\20250416-5281\\eab5f0f6-6c64-4e7b-bf50-be19e04f05e2.png"
+    },
+    {
+      "Id": "G:\\AAzarAAb\\MessageForAzarab\\wwwroot\\uploads\\20250419-2908\\5c4b1bfb-856a-4ec7-ac34-c28bc2f23670.xlsx",
+      "PackagePath": "staticwebassets\\uploads\\20250419-2908\\5c4b1bfb-856a-4ec7-ac34-c28bc2f23670.xlsx"
+    },
+    {
+      "Id": "G:\\AAzarAAb\\MessageForAzarab\\wwwroot\\uploads\\20250419-2908\\80b33fbe-aaca-4bee-8f15-5515b1b5b0a6.csv",
+      "PackagePath": "staticwebassets\\uploads\\20250419-2908\\80b33fbe-aaca-4bee-8f15-5515b1b5b0a6.csv"
+    },
+    {
+      "Id": "G:\\AAzarAAb\\MessageForAzarab\\wwwroot\\uploads\\20250419-2908\\c66c5235-0a2a-4465-8d8c-6f0235a866a5.xlsx",
+      "PackagePath": "staticwebassets\\uploads\\20250419-2908\\c66c5235-0a2a-4465-8d8c-6f0235a866a5.xlsx"
+    },
+    {
+      "Id": "G:\\AAzarAAb\\MessageForAzarab\\wwwroot\\uploads\\20250419-2908\\f550af2b-8674-41ab-8a98-13648476fcfe.xls",
+      "PackagePath": "staticwebassets\\uploads\\20250419-2908\\f550af2b-8674-41ab-8a98-13648476fcfe.xls"
+    },
+    {
+      "Id": "G:\\AAzarAAb\\MessageForAzarab\\wwwroot\\uploads\\20250419-6618\\0b5e0dbd-9776-48ee-8944-dc63404ccfdd.xlsx",
+      "PackagePath": "staticwebassets\\uploads\\20250419-6618\\0b5e0dbd-9776-48ee-8944-dc63404ccfdd.xlsx"
+    },
+    {
+      "Id": "G:\\AAzarAAb\\MessageForAzarab\\wwwroot\\uploads\\20250419-6618\\c756b1e3-7c06-4a11-88ed-db858ac668e8.xlsx",
+      "PackagePath": "staticwebassets\\uploads\\20250419-6618\\c756b1e3-7c06-4a11-88ed-db858ac668e8.xlsx"
+    },
+    {
+      "Id": "G:\\AAzarAAb\\MessageForAzarab\\wwwroot\\uploads\\20250419-8628\\62310a91-9b9d-4393-86db-f929ccea758a.json",
+      "PackagePath": "staticwebassets\\uploads\\20250419-8628\\62310a91-9b9d-4393-86db-f929ccea758a.json"
+    },
+    {
+      "Id": "G:\\AAzarAAb\\MessageForAzarab\\wwwroot\\uploads\\20250419-8628\\ac52335b-4aa4-4bd5-bf96-d707b38c363a.jpg",
+      "PackagePath": "staticwebassets\\uploads\\20250419-8628\\ac52335b-4aa4-4bd5-bf96-d707b38c363a.jpg"
+    },
+    {
+      "Id": "G:\\AAzarAAb\\MessageForAzarab\\wwwroot\\uploads\\20250419-8628\\f7bf104d-ecb1-46f8-9fc2-516af618008b.part",
+      "PackagePath": "staticwebassets\\uploads\\20250419-8628\\f7bf104d-ecb1-46f8-9fc2-516af618008b.part"
+    },
+    {
+      "Id": "obj\\Debug\\net9.0\\staticwebassets\\msbuild.MessageForAzarab.Microsoft.AspNetCore.StaticWebAssetEndpoints.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssetEndpoints.props"
+    },
+    {
+      "Id": "obj\\Debug\\net9.0\\staticwebassets\\msbuild.MessageForAzarab.Microsoft.AspNetCore.StaticWebAssets.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
+    },
+    {
+      "Id": "obj\\Debug\\net9.0\\staticwebassets\\msbuild.build.MessageForAzarab.props",
+      "PackagePath": "build\\MessageForAzarab.props"
+    },
+    {
+      "Id": "obj\\Debug\\net9.0\\staticwebassets\\msbuild.buildMultiTargeting.MessageForAzarab.props",
+      "PackagePath": "buildMultiTargeting\\MessageForAzarab.props"
+    },
+    {
+      "Id": "obj\\Debug\\net9.0\\staticwebassets\\msbuild.buildTransitive.MessageForAzarab.props",
+      "PackagePath": "buildTransitive\\MessageForAzarab.props"
+    }
+  ],
+  "ElementsToRemove": []
+}

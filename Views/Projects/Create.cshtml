@@ -1,0 +1,96 @@
+@model MessageForAzarab.Models.Project
+
+@{
+    ViewData["Title"] = "ایجاد پروژه جدید";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1 class="h3">@ViewData["Title"]</h1>
+        <a asp-action="Index" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-right"></i> بازگشت به لیست
+        </a>
+    </div>
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 fw-bold">اطلاعات پروژه</h6>
+        </div>
+        <div class="card-body">
+            <form asp-action="Create" method="post">
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger mb-3" role="alert"></div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="form-floating mb-3">
+                            <input asp-for="ProjectCode" class="form-control" placeholder="کد پروژه" />
+                            <label asp-for="ProjectCode"></label>
+                            <span asp-validation-for="ProjectCode" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-floating mb-3">
+                            <input asp-for="Name" class="form-control" placeholder="نام پروژه" />
+                            <label asp-for="Name"></label>
+                            <span asp-validation-for="Name" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-floating mb-3">
+                    <textarea asp-for="Description" class="form-control" style="height: 120px" placeholder="توضیحات پروژه"></textarea>
+                    <label asp-for="Description"></label>
+                    <span asp-validation-for="Description" class="text-danger"></span>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="form-floating mb-3">
+                            <input asp-for="StartDate" class="form-control" type="date" />
+                            <label asp-for="StartDate"></label>
+                            <span asp-validation-for="StartDate" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-floating mb-3">
+                            <input asp-for="EndDate" class="form-control" type="date" />
+                            <label asp-for="EndDate"></label>
+                            <span asp-validation-for="EndDate" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-check form-switch mb-3">
+                    <input asp-for="IsActive" class="form-check-input" />
+                    <label asp-for="IsActive" class="form-check-label"></label>
+                </div>
+
+                <div class="d-flex justify-content-end mt-4">
+                    <a asp-action="Index" class="btn btn-outline-secondary me-2">
+                        <i class="bi bi-x-lg"></i> انصراف
+                    </a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-save"></i> ذخیره
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        $(document).ready(function() {
+            // تنظیم تاریخ‌ها به فرمت مناسب برای input type="date"
+            function formatDateForInput(dateString) {
+                if (!dateString) return '';
+                let date = new Date(dateString);
+                return date.toISOString().slice(0, 10);
+            }
+            
+            $('#StartDate').val(formatDateForInput('@Model?.StartDate'));
+            $('#EndDate').val(formatDateForInput('@Model?.EndDate'));
+        });
+    </script>
+} 

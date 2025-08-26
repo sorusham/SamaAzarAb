@@ -1,0 +1,254 @@
+@model MessageForAzarab.Models.Attachment
+
+@{
+    ViewData["Title"] = "جزئیات پیوست";
+}
+
+<div class="container fade-in">
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h3 class="mb-0">
+                <i class="bi bi-file-earmark-text-fill text-primary"></i>
+                جزئیات پیوست
+            </h3>
+            <span class="badge bg-primary fs-6">@Model.Title</span>
+        </div>
+        <div class="card-body">
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <div class="card border-0 mb-3">
+                        <div class="card-header bg-light">
+                            <h5 class="mb-0">
+                                <i class="bi bi-info-circle-fill text-primary"></i> اطلاعات پیوست
+                            </h5>
+                        </div>
+                        <div class="card-body px-0">
+                            <div class="row mb-2">
+                                <div class="col-4 text-muted">توضیحات:</div>
+                                <div class="col-8">@Model.Description</div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-4 text-muted">تاریخ ارسال:</div>
+                                <div class="col-8">@Model.DateSent.ToString("yyyy/MM/dd HH:mm")</div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-4 text-muted">فرستنده:</div>
+                                <div class="col-8">@Model.From</div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-4 text-muted">گیرنده:</div>
+                                <div class="col-8">@Model.To</div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-4 text-muted">تعداد فایل‌ها:</div>
+                                <div class="col-8">
+                                    <span class="badge bg-info">@Model.Files.Count</span>
+                                </div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-4 text-muted">تعداد بازنگری‌ها:</div>
+                                <div class="col-8">
+                                    <span class="badge bg-success">@Model.Revisions.Count</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">
+                        <i class="bi bi-file-earmark-fill text-primary"></i> فایل‌ها
+                        <button type="button" class="btn btn-sm btn-outline-primary float-end" data-bs-toggle="modal" data-bs-target="#addFileModal">
+                            <i class="bi bi-plus-circle"></i> افزودن فایل
+                        </button>
+                    </h5>
+                </div>
+                <div class="card-body p-0">
+                    @if (Model.Files.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>نام فایل</th>
+                                        <th>نوع فایل</th>
+                                        <th>حجم</th>
+                                        <th>عملیات</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var file in Model.Files)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <i class="bi bi-file-earmark-text"></i>
+                                                @file.OriginalFileName
+                                            </td>
+                                            <td>@file.FileType</td>
+                                            <td>@(file.FileSize / 1024) KB</td>
+                                            <td>
+                                                <a asp-action="Download" asp-route-id="@file.Id" class="btn btn-sm btn-outline-success">
+                                                    <i class="bi bi-download"></i> دانلود
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-info m-3">
+                            <i class="bi bi-info-circle-fill"></i>
+                            هیچ فایلی برای این پیوست وجود ندارد.
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="bi bi-clock-history text-primary"></i> بازنگری‌ها
+                    </h5>
+                    <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#addRevisionModal">
+                        <i class="bi bi-plus-circle"></i> افزودن بازنگری
+                    </button>
+                </div>
+                <div class="card-body p-0">
+                    @if (Model.Revisions.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>شماره</th>
+                                        <th>وضعیت</th>
+                                        <th>تاریخ</th>
+                                        <th>تغییر دهنده</th>
+                                        <th>از</th>
+                                        <th>به</th>
+                                        <th>توضیحات</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var revision in Model.Revisions.OrderByDescending(r => r.RevisionNumber))
+                                    {
+                                        <tr>
+                                            <td>
+                                                <span class="badge bg-primary">@revision.RevisionNumber</span>
+                                            </td>
+                                            <td>
+                                                @{
+                                                    var statusClass = revision.Status.ToLower() switch
+                                                    {
+                                                        "تأیید شده" => "bg-success",
+                                                        "رد شده" => "bg-danger",
+                                                        "نیاز به اصلاح" => "bg-warning",
+                                                        "در حال بررسی" => "bg-info",
+                                                        _ => "bg-secondary"
+                                                    };
+                                                }
+                                                <span class="badge @statusClass">@revision.Status</span>
+                                            </td>
+                                            <td>@revision.StatusDate.ToString("yyyy/MM/dd HH:mm")</td>
+                                            <td>@revision.ChangedBy</td>
+                                            <td>@revision.From</td>
+                                            <td>@revision.To</td>
+                                            <td>@revision.Comment</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-info m-3">
+                            <i class="bi bi-info-circle-fill"></i>
+                            هیچ بازنگری برای این پیوست وجود ندارد.
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="card-footer">
+            <a asp-controller="Letters" asp-action="Details" asp-route-id="@Model.LetterId" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-right"></i> بازگشت به نامه
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Modal افزودن بازنگری -->
+<div class="modal fade" id="addRevisionModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="bi bi-plus-circle"></i> افزودن بازنگری جدید
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form asp-action="AddRevision" method="post">
+                <div class="modal-body">
+                    <input type="hidden" name="attachmentId" value="@Model.Id" />
+                    
+                    <div class="mb-3">
+                        <label class="form-label">وضعیت</label>
+                        <select name="status" class="form-select" required>
+                            <option value="تأیید شده">تأیید شده</option>
+                            <option value="رد شده">رد شده</option>
+                            <option value="نیاز به اصلاح">نیاز به اصلاح</option>
+                            <option value="در حال بررسی">در حال بررسی</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">توضیحات</label>
+                        <textarea name="comment" class="form-control" rows="3"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">انصراف</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-save"></i> ثبت بازنگری
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal افزودن فایل -->
+<div class="modal fade" id="addFileModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="bi bi-file-earmark-plus"></i> افزودن فایل جدید
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form asp-action="AddFiles" method="post" enctype="multipart/form-data">
+                <div class="modal-body">
+                    <input type="hidden" name="attachmentId" value="@Model.Id" />
+                    
+                    <div class="mb-3">
+                        <label class="form-label">انتخاب فایل‌ها</label>
+                        <input type="file" name="files" class="form-control" multiple required />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">انصراف</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-upload"></i> آپلود فایل‌ها
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div> 

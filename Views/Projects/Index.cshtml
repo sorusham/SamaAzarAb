@@ -1,0 +1,142 @@
+@model IEnumerable<MessageForAzarab.Models.Project>
+
+@{
+    ViewData["Title"] = "پروژه‌ها";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h3">@ViewData["Title"]</h1>
+    <div class="d-flex">
+        <a asp-action="Create" class="btn btn-primary">
+            <i class="bi bi-plus-lg"></i> ایجاد پروژه جدید
+        </a>
+    </div>
+</div>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="bi bi-check-circle me-1"></i> @TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+        <h6 class="m-0 fw-bold">لیست پروژه‌ها</h6>
+        <div class="dropdown no-arrow">
+            <a class="dropdown-toggle" href="#" role="button" id="projectsDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="bi bi-three-dots-vertical"></i>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="projectsDropdown">
+                <li><a class="dropdown-item" href="#"><i class="bi bi-funnel"></i> همه پروژه‌ها</a></li>
+                <li><a class="dropdown-item" href="#"><i class="bi bi-check-circle"></i> پروژه‌های فعال</a></li>
+                <li><a class="dropdown-item" href="#"><i class="bi bi-x-circle"></i> پروژه‌های غیرفعال</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table id="projectsTable" class="table table-hover table-bordered datatable" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>@Html.DisplayNameFor(model => model.ProjectCode)</th>
+                        <th>@Html.DisplayNameFor(model => model.Name)</th>
+                        <th>@Html.DisplayNameFor(model => model.StartDate)</th>
+                        <th>@Html.DisplayNameFor(model => model.EndDate)</th>
+                        <th>وضعیت</th>
+                        <th>عملیات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@Html.DisplayFor(modelItem => item.ProjectCode)</td>
+                            <td>@Html.DisplayFor(modelItem => item.Name)</td>
+                            <td>
+                                @if (item.StartDate.HasValue)
+                                {
+                                    <span class="date">@item.StartDate.Value.ToString("yyyy/MM/dd")</span>
+                                }
+                                else
+                                {
+                                    <span class="text-muted">-</span>
+                                }
+                            </td>
+                            <td>
+                                @if (item.EndDate.HasValue)
+                                {
+                                    <span class="date">@item.EndDate.Value.ToString("yyyy/MM/dd")</span>
+                                }
+                                else
+                                {
+                                    <span class="text-muted">-</span>
+                                }
+                            </td>
+                            <td class="text-center">
+                                @if (item.IsActive)
+                                {
+                                    <span class="badge bg-success">فعال</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-danger">غیرفعال</span>
+                                }
+                            </td>
+                            <td>
+                                <div class="btn-group" role="group">
+                                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info" title="مشاهده">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning" title="ویرایش">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                    <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal-@item.Id" title="حذف">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
+                                
+                                <!-- مدال حذف -->
+                                <div class="modal fade" id="deleteModal-@item.Id" tabindex="-1" aria-labelledby="deleteModalLabel-@item.Id" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="deleteModalLabel-@item.Id">تأیید حذف</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                آیا از حذف پروژه <strong>@item.Name</strong> با کد <strong>@item.ProjectCode</strong> اطمینان دارید؟
+                                                <div class="alert alert-warning mt-3">
+                                                    <i class="bi bi-exclamation-triangle-fill"></i>
+                                                    با حذف این پروژه، ارتباط آن با اسناد و نامه‌های مرتبط حذف خواهد شد.
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">انصراف</button>
+                                                <form asp-action="Delete" asp-route-id="@item.Id" method="post" class="d-inline">
+                                                    <button type="submit" class="btn btn-danger">
+                                                        <i class="bi bi-trash"></i> حذف
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // اضافه کردن tooltip به دکمه‌ها
+            $('[title]').tooltip();
+        });
+    </script>
+} 

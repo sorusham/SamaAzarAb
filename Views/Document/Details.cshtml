@@ -1,0 +1,330 @@
+@model MessageForAzarab.Models.BaseDocument
+
+@{
+    ViewData["Title"] = "جزئیات سند: " + Model.Title;
+    var currentVersion = Model.DocumentVersions?.FirstOrDefault(v => v.RevisionNumber == Model.CurrentRevision);
+}
+
+<div class="container-fluid fade-in">
+    <!-- هدر صفحه -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div class="d-flex align-items-center">
+            <i class="bi bi-file-earmark-medical text-primary fs-1 me-3"></i>
+            <div>
+                <h1 class="h3 mb-1">@ViewData["Title"]</h1>
+                <div class="text-muted">
+                    <i class="bi bi-hash me-1"></i>
+                    کد سند: <span class="badge bg-primary">@Model.DocCode</span>
+                </div>
+            </div>
+        </div>
+        <div class="d-flex gap-2">
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-outline-primary" data-bs-toggle="tooltip" title="ویرایش اطلاعات پایه سند">
+                <i class="bi bi-pencil-square"></i>
+            </a>
+            <a asp-action="Index" class="btn btn-outline-secondary" data-bs-toggle="tooltip" title="بازگشت به لیست اسناد">
+                <i class="bi bi-arrow-right"></i>
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- اطلاعات اصلی سند -->
+        <div class="col-lg-7 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body p-4">
+                    <h5 class="card-title d-flex align-items-center mb-4">
+                        <i class="bi bi-info-circle-fill text-primary me-2"></i>
+                        اطلاعات اصلی
+                    </h5>
+
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <div class="p-3 bg-light rounded">
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="bi bi-file-text text-primary me-2"></i>
+                                    <strong>عنوان سند</strong>
+                                </div>
+                                <div class="h5 mb-0">@Model.Title</div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="p-3 bg-light rounded">
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="bi bi-hash text-primary me-2"></i>
+                                    <strong>کد مدرک آذرآبی</strong>
+                                </div>
+                                <div class="font-monospace">@Model.DocCode</div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="p-3 bg-light rounded">
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="bi bi-hash text-primary me-2"></i>
+                                    <strong>کد مدرک کارفرما</strong>
+                                </div>
+                                <div class="font-monospace">@(string.IsNullOrEmpty(Model.ClientDocCode) ? "-" : Model.ClientDocCode)</div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="p-3 bg-light rounded">
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="bi bi-building text-primary me-2"></i>
+                                    <strong>دپارتمان</strong>
+                                </div>
+                                <div>@(Model.Department?.Name ?? "-")</div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="p-3 bg-light rounded">
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="bi bi-diagram-3 text-primary me-2"></i>
+                                    <strong>پروژه</strong>
+                                </div>
+                                <div>@(Model.Project?.Name ?? "-")</div>
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="p-3 bg-light rounded">
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="bi bi-card-text text-primary me-2"></i>
+                                    <strong>توضیحات</strong>
+                                </div>
+                                <div class="text-muted">@(string.IsNullOrEmpty(Model.Description) ? "ندارد" : Model.Description)</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- اطلاعات وضعیت و پیگیری -->
+        <div class="col-lg-5 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body p-4">
+                    <h5 class="card-title d-flex align-items-center mb-4">
+                        <i class="bi bi-clipboard-check-fill text-info me-2"></i>
+                        وضعیت و پیگیری
+                    </h5>
+
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <div class="p-3 bg-light rounded">
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="bi bi-toggle-on text-primary me-2"></i>
+                                    <strong>وضعیت سند</strong>
+                                </div>
+                                <div>
+                                    <span class="badge @(Model.Status == "E" ? "bg-success" : "bg-danger")">
+                                        <i class="bi @(Model.Status == "E" ? "bi-check-circle" : "bi-x-circle") me-1"></i>
+                                        @(Model.Status == "E" ? "فعال" : "غیرفعال")
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="p-3 bg-light rounded">
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="bi bi-send-check text-primary me-2"></i>
+                                    <strong>وضعیت صدور</strong>
+                                </div>
+                                <div>
+                                    <span class="badge @(Model.IssueStatus == DocumentIssueStatus.Issued ? "bg-info" : (Model.IssueStatus == DocumentIssueStatus.Revoked ? "bg-danger" : "bg-secondary"))">
+                                        @Model.IssueStatus.ToString()
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="p-3 bg-light rounded">
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="bi bi-hash text-primary me-2"></i>
+                                    <strong>نسخه فعلی</strong>
+                                </div>
+                                <div class="h4 mb-0">@Model.CurrentRevision</div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="p-3 bg-light rounded">
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="bi bi-person text-primary me-2"></i>
+                                    <strong>ایجادکننده اولیه</strong>
+                                </div>
+                                <div>@(Model.Creator?.FullName ?? (Model.DocumentVersions?.FirstOrDefault()?.Creator?.FullName ?? "-"))</div>
+                                <small class="text-muted">@((Model.DocumentVersions?.OrderBy(v => v.CreationDate).FirstOrDefault()?.CreationDate.ToString("yyyy/MM/dd")) ?? "-")</small>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="p-3 bg-light rounded">
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="bi bi-person-check text-primary me-2"></i>
+                                    <strong>صحه گذار</strong>
+                                </div>
+                                <div>@(Model.Checker?.FullName ?? "تعیین نشده")</div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="p-3 bg-light rounded">
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="bi bi-person-check-fill text-primary me-2"></i>
+                                    <strong>تصدیق کننده</strong>
+                                </div>
+                                <div>@(Model.Approver?.FullName ?? "تعیین نشده")</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- نسخه‌های ثبت شده -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-body p-4">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h5 class="card-title d-flex align-items-center mb-0">
+                    <i class="bi bi-diagram-3 text-primary me-2"></i>
+                    نسخه‌های ثبت شده
+                    <span class="badge bg-primary ms-2">@Model.DocumentVersions.Count</span>
+                </h5>
+                @if (Model.Status == "E")
+                {
+                    <a asp-action="CreateVersion" asp-route-documentId="@Model.Id" class="btn btn-primary" data-bs-toggle="tooltip" title="ثبت نسخه جدید برای این سند">
+                        <i class="bi bi-plus-circle me-1"></i>
+                        ثبت نسخه جدید
+                    </a>
+                }
+            </div>
+
+            @if (Model.DocumentVersions != null && Model.DocumentVersions.Any())
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0" id="DocumentDocumentDocumentVersionsTable">
+                        <thead class="table-light">
+                            <tr>
+                                <th class="text-center">شماره نسخه</th>
+                                <th class="text-center">وضعیت نسخه</th>
+                                <th class="text-center">وضعیت ارسال</th>
+                                <th>ایجادکننده</th>
+                                <th class="text-center">تاریخ ایجاد</th>
+                                <th class="text-center">پیشرفت</th>
+                                <th class="text-center no-sort" style="width: 100px;">عملیات</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var version in Model.DocumentVersions.OrderByDescending(v => v.RevisionNumber))
+                            {
+                                <tr class="@(currentVersion != null && version.Id == currentVersion.Id ? "table-info" : "")">
+                                    <td class="text-center">
+                                        <div class="d-flex align-items-center justify-content-center">
+                                            <i class="bi bi-hash text-primary me-2"></i>
+                                            <span class="fw-bold">@version.RevisionNumber</span>
+                                        </div>
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="badge @(version.Status == "O" ? "bg-info" : "bg-secondary")">
+                                            <i class="bi @(version.Status == "O" ? "bi-unlock" : "bi-lock") me-1"></i>
+                                            @(version.Status == "O" ? "باز" : "بسته")
+                                        </span>
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="badge @(version.IsSent ? "bg-success" : "bg-warning")">
+                                            <i class="bi @(version.IsSent ? "bi-check-circle" : "bi-hourglass-split") me-1"></i>
+                                            @(version.IsSent ? "ارسال شده" : "ارسال نشده")
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <i class="bi bi-person text-primary me-2"></i>
+                                            @(version.Creator?.FullName ?? "نامشخص")
+                                        </div>
+                                    </td>
+                                    <td class="text-center">@version.CreationDate.ToString("yyyy/MM/dd HH:mm")</td>
+                                    <td class="text-center">
+                                        <div class="progress" style="height: 20px;" data-bs-toggle="tooltip" title="@version.Progress%">
+                                            <div class="progress-bar progress-bar-striped bg-primary" role="progressbar" style="width: @version.Progress%;" aria-valuenow="@version.Progress" aria-valuemin="0" aria-valuemax="100">
+                                                @version.Progress%
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="text-center">
+                                        <div class="btn-group btn-group-sm">
+                                            <a asp-controller="Document" asp-action="VersionDetails" asp-route-id="@version.Id"
+                                               class="btn btn-outline-primary" data-bs-toggle="tooltip" title="مشاهده جزئیات نسخه @version.RevisionNumber">
+                                                <i class="bi bi-search"></i>
+                                            </a>
+                                            @if (!version.IsSent)
+                                            {
+                                                <a asp-controller="Document" asp-action="EditVersion" asp-route-id="@version.Id"
+                                                   class="btn btn-outline-warning" data-bs-toggle="tooltip" title="ویرایش نسخه @version.RevisionNumber">
+                                                    <i class="bi bi-pencil"></i>
+                                                </a>
+                                            }
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-secondary text-center">
+                    <i class="bi bi-info-circle me-2"></i>
+                    هیچ نسخه‌ای برای این سند ثبت نشده است.
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // فعال‌سازی تولتیپ‌ها
+            const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl, {
+                    placement: 'top'
+                });
+            });
+
+            // فعال‌سازی جدول
+            $('#DocumentDocumentDocumentVersionsTable').DataTable({
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/fa.json'
+                },
+                order: [[0, 'desc']],
+                columnDefs: [
+                    { targets: 'no-sort', orderable: false }
+                ],
+                pageLength: 10,
+                responsive: true
+            });
+        });
+    </script>
+}
+
+<style>
+    .bg-success-soft { background-color: rgba(var(--success-color-rgb), 0.1); }
+    .bg-danger-soft { background-color: rgba(var(--danger-color-rgb), 0.1); }
+    .bg-info-soft { background-color: rgba(var(--info-color-rgb), 0.1); }
+    .bg-warning-soft { background-color: rgba(var(--warning-color-rgb), 0.1); }
+    .bg-secondary-soft { background-color: rgba(var(--secondary-color-rgb), 0.1); }
+
+    .dt-compact dd, .dt-compact dt {
+        padding-top: 0.3rem;
+        padding-bottom: 0.3rem;
+    }
+</style> 

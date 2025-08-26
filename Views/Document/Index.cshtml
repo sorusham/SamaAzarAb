@@ -1,0 +1,265 @@
+@model IEnumerable<MessageForAzarab.Models.BaseDocument>
+
+@{
+    ViewData["Title"] = "لیست مدارک";
+}
+
+<div class="container-fluid fade-in">
+    <!-- هدر صفحه -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div class="d-flex align-items-center">
+            <i class="bi bi-file-earmark-text-fill text-primary fs-1 me-3"></i>
+            <div>
+                <h1 class="h3 mb-1">@ViewData["Title"]</h1>
+                <div class="text-muted">
+                    <i class="bi bi-info-circle me-1"></i>
+                    مدیریت و پیگیری مدارک پروژه
+                </div>
+            </div>
+        </div>
+        <a asp-action="Create" class="btn btn-primary">
+            <i class="bi bi-plus-lg me-1"></i>
+            ایجاد سند جدید
+        </a>
+    </div>
+
+    <!-- فیلترها و جستجو -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <div class="input-group">
+                        <span class="input-group-text bg-light">
+                            <i class="bi bi-search"></i>
+                        </span>
+                        <input type="text" id="searchInput" class="form-control" placeholder="جستجو در مدارک...">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <select id="statusFilter" class="form-select">
+                        <option value="">همه وضعیت‌ها</option>
+                        <option value="E">فعال</option>
+                        <option value="D">غیرفعال</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <select id="departmentFilter" class="form-select">
+                        <option value="">همه دپارتمان‌ها</option>
+                        @foreach (var dept in Model.Select(d => d.Department).Distinct().Where(d => d != null))
+                        {
+                            <option value="@dept.Id">@dept.Name</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <button id="resetFilters" class="btn btn-outline-secondary w-100">
+                        <i class="bi bi-arrow-counterclockwise me-1"></i>
+                        بازنشانی
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- جدول مدارک -->
+    <div class="card shadow-sm">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table id="documentsTable" class="table table-hover align-middle mb-0">
+                    <thead class="bg-light">
+                        <tr>
+                            <th class="text-center">کد آذرآب</th>
+                            <th class="text-center">کد کارفرما</th>
+                            <th>عنوان</th>
+                            <th>دپارتمان</th>
+                            <th>پروژه</th>
+                            <th class="text-center">وضعیت</th>
+                            <th class="text-center">نسخه فعلی</th>
+                            <th>ایجادکننده</th>
+                            <th class="text-center">تاریخ ایجاد</th>
+                            <th class="text-center no-sort" style="width: 120px;">عملیات</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var document in Model)
+                        {
+                            <tr>
+                                <td class="text-center font-monospace small">@document.DocCode</td>
+                                <td class="text-center font-monospace small">@(document.ClientDocCode ?? "-")</td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <i class="bi bi-file-earmark-text text-primary me-2"></i>
+                                        @document.Title
+                                    </div>
+                                </td>
+                                <td>
+                                    @if (document.Department != null)
+                                    {
+                                        <span class="badge bg-info-soft text-info">
+                                            <i class="bi bi-building me-1"></i>
+                                            @document.Department.Name
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">-</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (document.Project != null)
+                                    {
+                                        <span class="badge bg-primary-soft text-primary">
+                                            <i class="bi bi-diagram-3 me-1"></i>
+                                            @document.Project.Name
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">-</span>
+                                    }
+                                </td>
+                                <td class="text-center">
+                                    <span class="badge @(document.Status == "E" ? "bg-success-soft text-success" : "bg-danger-soft text-danger")">
+                                        <i class="bi @(document.Status == "E" ? "bi-check-circle" : "bi-x-circle") me-1"></i>
+                                        @(document.Status == "E" ? "فعال" : "غیرفعال")
+                                    </span>
+                                </td>
+                                <td class="text-center">
+                                    <span class="badge bg-secondary-soft text-secondary">
+                                        <i class="bi bi-1-circle me-1"></i>
+                                        @document.CurrentRevision
+                                    </span>
+                                </td>
+                                <td>
+                                    @if (document.DocumentVersions.FirstOrDefault()?.Creator != null)
+                                    {
+                                        <div class="d-flex align-items-center">
+                                            <i class="bi bi-person-circle text-muted me-2"></i>
+                                            @document.DocumentVersions.FirstOrDefault()?.Creator.FullName
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">-</span>
+                                    }
+                                </td>
+                                <td class="text-center small">@(document.DocumentVersions.FirstOrDefault()?.CreationDate.ToString("yyyy/MM/dd") ?? "-")</td>
+                                <td class="text-center">
+                                    <div class="btn-group btn-group-sm" role="group">
+                                        <a asp-action="Details" asp-route-id="@document.Id"
+                                           class="btn btn-outline-info" data-bs-toggle="tooltip" title="مشاهده جزئیات">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        <a asp-action="Edit" asp-route-id="@document.Id"
+                                           class="btn btn-outline-warning" data-bs-toggle="tooltip" title="ویرایش سند">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <button type="button" class="btn btn-outline-danger"
+                                                data-bs-toggle="modal" data-bs-target="#deleteModal"
+                                                data-id="@document.Id" data-title="@document.Title" data-bs-toggle="tooltip" title="حذف سند">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- مدال حذف -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content shadow-lg">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="deleteModalLabel">
+                    <i class="bi bi-trash-fill me-2"></i>تأیید حذف سند
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>آیا از حذف سند "<strong class="text-danger" id="documentTitle"></strong>" اطمینان دارید؟</p>
+                <div class="alert alert-warning d-flex align-items-center mt-3" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill flex-shrink-0 me-2"></i>
+                    <div>
+                        <strong>توجه:</strong> با حذف سند، تمامی نسخه‌ها، پیوست‌ها و اطلاعات مرتبط با آن نیز به صورت دائمی حذف خواهند شد.
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <form id="deleteForm" asp-action="Delete" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" id="documentId" name="id" />
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">انصراف</button>
+                    <button type="submit" class="btn btn-danger">
+                        <i class="bi bi-check-lg me-1"></i> بله، حذف کن
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // تنظیمات DataTable
+            var table = $('#documentsTable').DataTable({
+                columnDefs: [
+                    { targets: 'no-sort', orderable: false }
+                ],
+                order: [[8, 'desc']],
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/fa.json'
+                }
+            });
+
+            // فیلتر وضعیت
+            $('#statusFilter').on('change', function() {
+                var status = $(this).val();
+                table.column(5).search(status).draw();
+            });
+
+            // فیلتر دپارتمان
+            $('#departmentFilter').on('change', function() {
+                var dept = $(this).val();
+                table.column(3).search(dept).draw();
+            });
+
+            // جستجو
+            $('#searchInput').on('keyup', function() {
+                table.search(this.value).draw();
+            });
+
+            // بازنشانی فیلترها
+            $('#resetFilters').on('click', function() {
+                $('#statusFilter').val('');
+                $('#departmentFilter').val('');
+                $('#searchInput').val('');
+                table.search('').columns().search('').draw();
+            });
+
+            // مدال حذف
+            $('#deleteModal').on('show.bs.modal', function (event) {
+                var button = $(event.relatedTarget);
+                var id = button.data('id');
+                var title = button.data('title');
+
+                var modal = $(this);
+                modal.find('#documentId').val(id);
+                modal.find('#documentTitle').text(title);
+            });
+
+            // فعال‌سازی تولتیپ‌ها
+            const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl, {
+                    placement: 'top'
+                });
+            });
+        });
+    </script>
+} 

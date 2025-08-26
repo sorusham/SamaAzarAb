@@ -1,0 +1,25 @@
+@model IEnumerable<MessageForAzarab.Models.Letter>
+
+@if (Model.Any())
+{
+    <div class="list-group">
+        @foreach (var letter in Model.Take(10))
+        {
+            <a href="@Url.Action("Details", "Letters", new { id = letter.Id })" class="list-group-item list-group-item-action">
+                <div class="d-flex w-100 justify-content-between">
+                    <h5 class="mb-1">@letter.Title</h5>
+                    <small class="text-muted">@letter.StartDate.ToString("yyyy/MM/dd")</small>
+                </div>
+                <p class="mb-1">به: @letter.To</p>
+                <small class="text-muted">@(letter.Attachments.Count) پیوست</small>
+            </a>
+        }
+    </div>
+}
+else
+{
+    <div class="alert alert-info">
+        <i class="bi bi-info-circle"></i>
+        شما تاکنون نامه‌ای ارسال نکرده‌اید.
+    </div>
+} 

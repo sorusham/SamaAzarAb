@@ -1,0 +1,201 @@
+@* @model List<MessageForAzarab.Models.ExcelPreviewRow> *@
+@* @{ *@
+@*     ViewData["Title"] = "پیش‌نمایش اطلاعات اکسل"; *@
+@* } *@
+
+@* <div class="container-fluid fade-in"> *@
+@*     <div class="row mb-4"> *@
+@*         <div class="col"> *@
+@*             <div class="card shadow-sm"> *@
+@*                 <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center"> *@
+@*                     <h5 class="mb-0"> *@
+@*                         <i class="fas fa-table me-2"></i> *@
+@*                         پیش‌نمایش اطلاعات فایل اکسل *@
+@*                     </h5> *@
+@*                     <div> *@
+@*                         <button type="button" class="btn btn-outline-light btn-sm me-2" onclick="selectAll(true)"> *@
+@*                             <i class="fas fa-check-square me-1"></i> *@
+@*                             انتخاب همه *@
+@*                         </button> *@
+@*                         <button type="button" class="btn btn-outline-light btn-sm" onclick="selectAll(false)"> *@
+@*                             <i class="fas fa-square me-1"></i> *@
+@*                             لغو انتخاب همه *@
+@*                         </button> *@
+@*                     </div> *@
+@*                 </div> *@
+@*                 <div class="card-body"> *@
+@*                     @if (!Model.Any()) *@
+@*                     { *@
+@*                         <div class="alert alert-info"> *@
+@*                             <i class="fas fa-info-circle me-2"></i> *@
+@*                             هیچ داده‌ای در فایل اکسل یافت نشد. *@
+@*                         </div> *@
+@*                     } *@
+@*                     else *@
+@*                     { *@
+@*                         <form id="importForm" method="post" asp-action="ImportSelectedDocuments"> *@
+@*                             <div class="table-responsive"> *@
+@*                                 <table class="table table-hover table-bordered" id="previewTable"> *@
+@*                                     <thead class="table-light"> *@
+@*                                         <tr> *@
+@*                                             <th> *@
+@*                                                 <div class="form-check"> *@
+@*                                                     <input type="checkbox" class="form-check-input" id="selectAllCheckbox" checked> *@
+@*                                                 </div> *@
+@*                                             </th> *@
+@*                                             <th>شیت</th> *@
+@*                                             <th>ردیف</th> *@
+@*                                             <th>کد مدرک</th> *@
+@*                                             <th>نام مدرک</th> *@
+@*                                             <th>کد آذرآب</th> *@
+@*                                             <th>تاریخ</th> *@
+@*                                             <th>POI</th> *@
+@*                                             <th>دیسیپلین</th> *@
+@*                                             <th>نوع مدرک</th> *@
+@*                                             <th>As Built</th> *@
+@*                                             <th>توضیحات</th> *@
+@*                                             <th>وزن</th> *@
+@*                                             <th>AFC</th> *@
+@*                                             <th>برنامه</th> *@
+@*                                             <th>یادآوری</th> *@
+@*                                             <th>مسئول</th> *@
+@*                                             <th>کتاب نهایی</th> *@
+@*                                             <th>وضعیت</th> *@
+@*                                         </tr> *@
+@*                                     </thead> *@
+@*                                     <tbody> *@
+@*                                         @for (var i = 0; i < Model.Count; i++) *@
+@*                                         { *@
+@*                                             var row = Model[i]; *@
+@*                                             <tr class="@(row.HasError ? "table-danger" : "")"> *@
+@*                                                 <td> *@
+@*                                                     <div class="form-check"> *@
+@*                                                         <input type="checkbox" class="form-check-input row-checkbox"  *@
+@*                                                                name="selectedRows[@i].IsSelected"  *@
+@*                                                                @(row.IsSelected ? "checked" : "") *@
+@*                                                                @(row.HasError ? "disabled" : "")> *@
+@*                                                         <input type="hidden" name="selectedRows[@i].SheetName" value="@row.SheetName"> *@
+@*                                                         <input type="hidden" name="selectedRows[@i].RowNumber" value="@row.RowNumber"> *@
+@*                                                         <input type="hidden" name="selectedRows[@i].DocCode" value="@row.DocCode"> *@
+@*                                                         <input type="hidden" name="selectedRows[@i].DocName" value="@row.DocName"> *@
+@*                                                         <input type="hidden" name="selectedRows[@i].AzarabCode" value="@row.AzarabCode"> *@
+@*                                                         <input type="hidden" name="selectedRows[@i].DocDate" value="@row.DocDate"> *@
+@*                                                         <input type="hidden" name="selectedRows[@i].POI" value="@row.POI"> *@
+@*                                                         <input type="hidden" name="selectedRows[@i].Discipline" value="@row.Discipline"> *@
+@*                                                         <input type="hidden" name="selectedRows[@i].DocType" value="@row.DocType"> *@
+@*                                                         <input type="hidden" name="selectedRows[@i].AsBuild" value="@row.AsBuild"> *@
+@*                                                         <input type="hidden" name="selectedRows[@i].Comment" value="@row.Comment"> *@
+@*                                                         <input type="hidden" name="selectedRows[@i].Weight" value="@row.Weight"> *@
+@*                                                         <input type="hidden" name="selectedRows[@i].AFC" value="@row.AFC"> *@
+@*                                                         <input type="hidden" name="selectedRows[@i].Plan" value="@row.Plan"> *@
+@*                                                         <input type="hidden" name="selectedRows[@i].Remin" value="@row.Remin"> *@
+@*                                                         <input type="hidden" name="selectedRows[@i].Responsible" value="@row.Responsible"> *@
+@*                                                         <input type="hidden" name="selectedRows[@i].FinalBook" value="@row.FinalBook"> *@
+@*                                                         <input type="hidden" name="selectedRows[@i].HasError" value="@row.HasError"> *@
+@*                                                     </div> *@
+@*                                                 </td> *@
+@*                                                 <td>@row.SheetName</td> *@
+@*                                                 <td>@row.RowNumber</td> *@
+@*                                                 <td>@row.DocCode</td> *@
+@*                                                 <td>@row.DocName</td> *@
+@*                                                 <td>@row.AzarabCode</td> *@
+@*                                                 <td>@row.DocDate</td> *@
+@*                                                 <td>@row.POI</td> *@
+@*                                                 <td>@row.Discipline</td> *@
+@*                                                 <td>@row.DocType</td> *@
+@*                                                 <td>@row.AsBuild</td> *@
+@*                                                 <td>@row.Comment</td> *@
+@*                                                 <td>@row.Weight</td> *@
+@*                                                 <td>@row.AFC</td> *@
+@*                                                 <td>@row.Plan</td> *@
+@*                                                 <td>@row.Remin</td> *@
+@*                                                 <td>@row.Responsible</td> *@
+@*                                                 <td>@row.FinalBook</td> *@
+@*                                                 <td> *@
+@*                                                     @if (row.HasError) *@
+@*                                                     { *@
+@*                                                         <span class="badge bg-danger" data-bs-toggle="tooltip" title="@row.ValidationMessage"> *@
+@*                                                             <i class="fas fa-exclamation-triangle me-1"></i> *@
+@*                                                             خطا *@
+@*                                                         </span> *@
+@*                                                     } *@
+@*                                                     else *@
+@*                                                     { *@
+@*                                                         <span class="badge bg-success"> *@
+@*                                                             <i class="fas fa-check me-1"></i> *@
+@*                                                             معتبر *@
+@*                                                         </span> *@
+@*                                                     } *@
+@*                                                 </td> *@
+@*                                             </tr> *@
+@*                                         } *@
+@*                                     </tbody> *@
+@*                                 </table> *@
+@*                             </div> *@
+
+@*                             <div class="row mt-4"> *@
+@*                                 <div class="col"> *@
+@*                                     <div class="alert alert-info"> *@
+@*                                         <i class="fas fa-info-circle me-2"></i> *@
+@*                                         تعداد کل رکوردها: @Model.Count *@
+@*                                         <br> *@
+@*                                         تعداد رکوردهای معتبر: @Model.Count(r => !r.HasError) *@
+@*                                         <br> *@
+@*                                         تعداد رکوردهای دارای خطا: @Model.Count(r => r.HasError) *@
+@*                                     </div> *@
+@*                                 </div> *@
+@*                             </div> *@
+
+@*                             <div class="row mt-3"> *@
+@*                                 <div class="col"> *@
+@*                                     <button type="submit" class="btn btn-primary"> *@
+@*                                         <i class="fas fa-file-import me-2"></i> *@
+@*                                         وارد کردن رکوردهای انتخاب شده *@
+@*                                     </button> *@
+@*                                     <a href="@Url.Action("UploadExcel")" class="btn btn-secondary"> *@
+@*                                         <i class="fas fa-arrow-left me-2"></i> *@
+@*                                         بازگشت *@
+@*                                     </a> *@
+@*                                 </div> *@
+@*                             </div> *@
+@*                         </form> *@
+@*                     } *@
+@*                 </div> *@
+@*             </div> *@
+@*         </div> *@
+@*     </div> *@
+@* </div> *@
+
+@* @section Scripts { *@
+@*     <script> *@
+@*         $(document).ready(function () { *@
+@*             // Initialize tooltips *@
+@*             var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]')) *@
+@*             var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) { *@
+@*                 return new bootstrap.Tooltip(tooltipTriggerEl) *@
+@*             }); *@
+
+@*             // Initialize DataTable *@
+@*             $('#previewTable').DataTable({ *@
+@*                 "language": { *@
+@*                     "url": "/lib/datatables/fa.json" *@
+@*                 }, *@
+@*                 "pageLength": 25, *@
+@*                 "order": [[2, "asc"], [1, "asc"]], // Sort by RowNumber, then SheetName *@
+@*                 "columnDefs": [ *@
+@*                     { "orderable": false, "targets": 0 } // Disable sorting on checkbox column *@
+@*                 ] *@
+@*             }); *@
+
+@*             // Handle select all checkbox *@
+@*             $('#selectAllCheckbox').change(function() { *@
+@*                 $('.row-checkbox:not(:disabled)').prop('checked', $(this).prop('checked')); *@
+@*             }); *@
+@*         }); *@
+
+@*         function selectAll(checked) { *@
+@*             $('.row-checkbox:not(:disabled)').prop('checked', checked); *@
+@*             $('#selectAllCheckbox').prop('checked', checked); *@
+@*         } *@
+@*     </script> *@
+@* }  *@

@@ -1,0 +1,293 @@
+@model MessageForAzarab.Models.BaseDocument
+
+@{
+    ViewData["Title"] = "ثبت سند جدید";
+}
+
+<div class="container-fluid fade-in">
+    <!-- هدر صفحه -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div class="d-flex align-items-center">
+            <i class="bi bi-file-earmark-plus-fill text-primary fs-1 me-3"></i>
+            <div>
+                <h1 class="h3 mb-1">@ViewData["Title"]</h1>
+                <div class="text-muted">
+                    <i class="bi bi-info-circle me-1"></i>
+                    ثبت اطلاعات اولیه سند جدید
+                </div>
+            </div>
+        </div>
+        <a asp-action="Index" class="btn btn-outline-secondary" data-bs-toggle="tooltip" title="بازگشت به لیست اسناد">
+            <i class="bi bi-arrow-right me-1"></i>
+            بازگشت
+        </a>
+    </div>
+
+    <form asp-action="Create" method="post" class="needs-validation" novalidate>
+        <div class="row">
+            <div class="col-lg-8">
+                <!-- فرم اصلی -->
+                <div class="card shadow-sm mb-4">
+                    <div class="card-body p-4">
+                        @if (!ViewContext.ModelState.IsValid)
+                        {
+                            <div class="alert alert-danger d-flex align-items-center mb-4" role="alert">
+                                <i class="bi bi-exclamation-triangle-fill fs-4 me-2"></i>
+                                <div asp-validation-summary="All"></div>
+                            </div>
+                        }
+
+                        <!-- اطلاعات اصلی سند -->
+                        <div class="mb-4">
+                            <h5 class="card-title d-flex align-items-center mb-3">
+                                <i class="bi bi-card-heading text-primary me-2"></i>
+                                اطلاعات اصلی سند
+                            </h5>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input asp-for="DocCode" class="form-control" placeholder="کد مدرک" required />
+                                    <label asp-for="DocCode">کد مدرک <span class="text-danger">*</span></label>
+                                    <div class="invalid-feedback">
+                                        <span asp-validation-for="DocCode"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <input asp-for="AzarabCode" class="form-control" placeholder="کد مدرک آذرآبی" required />
+                                        <label asp-for="AzarabCode">کد مدرک آذرآبی <span class="text-danger">*</span></label>
+                                        <div class="invalid-feedback">
+                                            <span asp-validation-for="DocCode"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <input asp-for="ClientDocCode" class="form-control" placeholder="کد مدرک کارفرمایی" />
+                                        <label asp-for="ClientDocCode">کد مدرک کارفرمایی</label>
+                                        <div class="invalid-feedback">
+                                            <span asp-validation-for="ClientDocCode"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="form-floating">
+                                        <input asp-for="Title" class="form-control" placeholder="عنوان کامل سند" required />
+                                        <label asp-for="Title">عنوان کامل سند <span class="text-danger">*</span></label>
+                                        <div class="invalid-feedback">
+                                            <span asp-validation-for="Title"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="form-floating">
+                                        <textarea asp-for="Description" class="form-control" style="height: 120px" 
+                                                  placeholder="توضیحات اضافی (اختیاری)"></textarea>
+                                        <label asp-for="Description">توضیحات اضافی (اختیاری)</label>
+                                        <div class="invalid-feedback">
+                                            <span asp-validation-for="Description"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <!-- طبقه‌بندی و وضعیت -->
+                        <div class="mb-4">
+                            <h5 class="card-title d-flex align-items-center mb-3">
+                                <i class="bi bi-folder2-open text-primary me-2"></i>
+                                طبقه‌بندی و وضعیت
+                            </h5>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <select asp-for="DepartmentId" class="form-select" required>
+                                            <option value="">انتخاب کنید...</option>
+                                            @foreach (var item in (SelectList)ViewBag.DepartmentId)
+                                            {
+                                                <option value="@item.Value">@item.Text</option>
+                                            }
+                                        </select>
+                                        <label asp-for="DepartmentId">دپارتمان <span class="text-danger">*</span></label>
+                                        <div class="invalid-feedback">
+                                            <span asp-validation-for="DepartmentId"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <select asp-for="ProjectId" class="form-select" required>
+                                            <option value="">انتخاب کنید...</option>
+                                            @foreach (var item in (SelectList)ViewBag.ProjectId)
+                                            {
+                                                <option value="@item.Value">@item.Text</option>
+                                            }
+                                        </select>
+                                        <label asp-for="ProjectId">پروژه <span class="text-danger">*</span></label>
+                                        <div class="invalid-feedback">
+                                            <span asp-validation-for="ProjectId"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label d-block">وضعیت اولیه سند</label>
+                                    <div class="d-flex gap-4">
+                                        <div class="form-check">
+                                            <input asp-for="Status" type="radio" value="E" class="form-check-input" id="status-active" checked />
+                                            <label class="form-check-label" for="status-active">
+                                                <i class="bi bi-check-circle-fill text-success me-1"></i>فعال
+                                            </label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input asp-for="Status" type="radio" value="D" class="form-check-input" id="status-inactive" />
+                                            <label class="form-check-label" for="status-inactive">
+                                                <i class="bi bi-x-circle-fill text-danger me-1"></i>غیرفعال
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="invalid-feedback">
+                                        <span asp-validation-for="Status"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <!-- بررسی‌کنندگان -->
+                        <div class="mb-4">
+                            <h5 class="card-title d-flex align-items-center mb-3">
+                                <i class="bi bi-people text-primary me-2"></i>
+                                بررسی‌کنندگان (اختیاری)
+                            </h5>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <select asp-for="CheckerId" class="form-select">
+                                            <option value="">انتخاب کنید...</option>
+                                            @foreach (var item in (SelectList)ViewBag.CheckerId)
+                                            {
+                                                <option value="@item.Value">@item.Text</option>
+                                            }
+                                        </select>
+                                        <label asp-for="CheckerId">صحه گذار</label>
+                                        <div class="invalid-feedback">
+                                            <span asp-validation-for="CheckerId"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <select asp-for="ApproverId" class="form-select">
+                                            <option value="">انتخاب کنید...</option>
+                                            @foreach (var item in (SelectList)ViewBag.ApproverId)
+                                            {
+                                                <option value="@item.Value">@item.Text</option>
+                                            }
+                                        </select>
+                                        <label asp-for="ApproverId">تصدیق کننده</label>
+                                        <div class="invalid-feedback">
+                                            <span asp-validation-for="ApproverId"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <div class="d-flex justify-content-end gap-2">
+                            <a asp-action="Index" class="btn btn-light">
+                                <i class="bi bi-x-lg me-1"></i>
+                                انصراف
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check-lg me-1"></i>
+                                ذخیره و ثبت سند
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- اطلاعات جانبی -->
+            <div class="col-lg-4">
+                <!-- راهنما -->
+                <div class="card shadow-sm mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title d-flex align-items-center mb-3">
+                            <i class="bi bi-info-circle-fill text-primary me-2"></i>
+                            راهنمای ثبت سند
+                        </h5>
+                        <div class="vstack gap-3">
+                            <div class="d-flex align-items-start">
+                                <i class="bi bi-1-circle-fill text-primary mt-1 me-2"></i>
+                                <div>
+                                    <strong>کد مدرک:</strong>
+                                    <p class="text-muted small mb-0">کد یکتای مدرک در سیستم آذرآب را وارد کنید.</p>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-start">
+                                <i class="bi bi-2-circle-fill text-primary mt-1 me-2"></i>
+                                <div>
+                                    <strong>طبقه‌بندی:</strong>
+                                    <p class="text-muted small mb-0">دپارتمان و پروژه مربوط به سند را مشخص کنید.</p>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-start">
+                                <i class="bi bi-3-circle-fill text-primary mt-1 me-2"></i>
+                                <div>
+                                    <strong>بررسی‌کنندگان:</strong>
+                                    <p class="text-muted small mb-0">در صورت نیاز، افراد مسئول بررسی را تعیین کنید.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- نکات مهم -->
+                <div class="card bg-primary text-white">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-lightbulb-fill fs-1 me-3"></i>
+                            <div>
+                                <h5 class="card-title mb-1">نکته مهم</h5>
+                                <p class="card-text mb-0">پس از ثبت سند، می‌توانید نسخه اول را ایجاد کنید.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        $(document).ready(function () {
+            // فعال‌سازی تولتیپ‌ها
+            const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl, {
+                    placement: 'top'
+                });
+            });
+
+            // فعال‌سازی اعتبارسنجی سمت کلاینت
+            const forms = document.querySelectorAll('.needs-validation');
+            Array.from(forms).forEach(form => {
+                form.addEventListener('submit', event => {
+                    if (!form.checkValidity()) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                    form.classList.add('was-validated');
+                }, false);
+            });
+        });
+    </script>
+}
