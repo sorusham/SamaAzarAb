@@ -99,5 +99,5 @@ This project is licensed under the [Apache License 2.0](LICENSE).
 For questions or feedback, reach out at [sorushmehrad@gmail.com](mailto:sorushmehrad@gmail.com) or open an issue.
 
 <div align="center">
-  <p>Built with 💻 and ☕ by <a href="https://github.com/sorusham">Sorush Mehrad</a></p>
+  <p>Built with 💻 and ☕ by <a href="https://github.com/sorusham">Soroush Mehrad</a></p>
 </div>
