@@ -1,83 +1,103 @@
-Engineering Document Management System
-A robust .NET MVC web application for managing engineering documents, revisions, notifications, and department-specific project assignments. Built with a focus on scalability, security, and user-friendly UI using Bootswatch themes.
-Features
+<div align="center">
+  <h1>SamaAzarAb: Engineering Document Management System</h1>
+  <p>A robust .NET MVC web application for managing engineering documents, revisions, and department workflows.</p>
+  <img src="https://img.shields.io/badge/.NET-6.0-blueviolet" alt=".NET 6.0">
+  <img src="https://img.shields.io/badge/License-Apache%202.0-brightgreen" alt="Apache 2.0 License">
+</div>
 
-Document & Revision Management: Upload, track, and manage engineering documents with revision history.
-Notification System: Real-time alerts for document updates, revisions, and approvals.
-User Authentication & Authorization: Role-based access control with ASP.NET Identity (Admin, User, Designer, Checker, Approver, DCC roles).
-Department & Project Allocation: Assign projects to specific departments for streamlined workflows.
-File Management: Secure file storage and retrieval for document attachments.
-Themed UI: Responsive and customizable interface using Bootswatch.
-Excel Processing: Tools for handling Excel-based data within the system.
+## ✨ Features
+- 📄 **Document & Revision Management**: Upload, track, and manage engineering documents with revision history.
+- 🔔 **Notification System**: Real-time alerts for document updates, revisions, and approvals.
+- 🔐 **Authentication & Authorization**: Role-based access control (Admin, User, Designer, Checker, Approver, DCC) using ASP.NET Identity.
+- 🏢 **Department & Project Allocation**: Assign projects to departments for streamlined workflows.
+- 📎 **File Management**: Secure storage and retrieval for document attachments.
+- 🎨 **Themed UI**: Responsive and customizable interface with Bootswatch.
+- 📊 **Excel Processing**: Tools for handling Excel-based data.
 
-Tech Stack
+## 🛠 Tech Stack
+<table>
+  <tr>
+    <th>Category</th>
+    <th>Technology</th>
+  </tr>
+  <tr>
+    <td>Backend</td>
+    <td>.NET MVC, C#</td>
+  </tr>
+  <tr>
+    <td>Frontend</td>
+    <td>Bootswatch, HTML, CSS, JavaScript</td>
+  </tr>
+  <tr>
+    <td>Database</td>
+    <td>SQLite (configurable for SQL Server)</td>
+  </tr>
+  <tr>
+    <td>Authentication</td>
+    <td>ASP.NET Identity</td>
+  </tr>
+</table>
 
-Backend: .NET MVC, C#
-Frontend: Bootswatch, HTML, CSS, JavaScript
-Database: SQLite (configurable for other databases like SQL Server)
-Authentication: ASP.NET Identity
-Services: Scoped services for Letters, Users, Roles, Files, Attachments, Notifications, Departments, Projects, and Documents
-Environment: Configured for development and production
+## 🚀 Getting Started
 
-Prerequisites
+### Prerequisites
+- .NET SDK 6.0 or later
+- SQLite (or another supported database)
+- Git
 
-.NET SDK 6.0 or later
-SQLite (or another supported database)
-Git (for cloning the repository)
-Visual Studio or any IDE supporting .NET development
+### Installation
+1. **Clone the Repository**:
+   ```bash
+   git clone https://github.com/sorusham/SamaAzarAb.git
+   cd SamaAzarAb
+   ```
+2. **Restore Dependencies**:
+   ```bash
+   dotnet restore
+   ```
+3. **Configure Database**:
+   - Update `appsettings.json` with your connection string:
+     ```json
+     "ConnectionStrings": {
+       "DefaultConnection": "Data Source=MessageForAzarab.db"
+     }
+     ```
+4. **Apply Migrations**:
+   ```bash
+   dotnet ef migrations add InitialCreate
+   dotnet ef database update
+   ```
+5. **Run the Application**:
+   ```bash
+   dotnet run
+   ```
+6. Open `https://localhost:5001` in your browser.
 
-Getting Started
+### Default Admin Account
+- **Email**: `admin@example.com`
+- **Password**: `Admin@123`
+- **Roles**: Admin, DCC
 
-Clone the Repository:git clone https://github.com/your-username/your-repo.git
+## 📂 Project Structure
+- **`Program.cs`**: Configures services, middleware, and initializes roles/users.
+- **`appsettings.json`**: Manages connection strings and logging.
+- **`Services`**: Scoped services for Letters, Users, Roles, Files, Attachments, Notifications, Departments, Projects, and Documents.
+- **`Models`**: Entities like `ApplicationUser` for identity management.
+- **`Data`**: EF Core context (`ApplicationDbContext`) for database operations.
 
+## 🤝 Contributing
+1. Fork the repository.
+2. Create a branch: `git checkout -b feature-branch`
+3. Commit changes: `git commit -m 'Add feature'`
+4. Push: `git push origin feature-branch`
+5. Open a Pull Request.
 
-Navigate to Project Directory:cd your-repo
+## 📜 License
+This project is licensed under the [Apache License 2.0](LICENSE).
 
+## 📧 Contact
+For questions or feedback, reach out at [sorushmehrad@gmail.com](mailto:sorushmehrad@gmail.com) or open an issue.
 
-Restore Dependencies:dotnet restore
-
-
-Configure Database:
-Update the connection string in appsettings.json if using a database other than SQLite:"ConnectionStrings": {
-  "DefaultConnection": "Data Source=MessageForAzarab.db"
-}
-
-
-
-
-Apply Migrations:dotnet ef migrations add InitialCreate
-dotnet ef database update
-
-
-Run the Application:dotnet run
-
-
-Open your browser and navigate to https://localhost:5001.
-
-Default Admin Account
-
-Email: admin@example.com
-Password: Admin@123
-Roles: Admin, DCC
-
-Project Structure
-
-Program.cs: Configures services, middleware, and initializes roles/users.
-appsettings.json: Contains connection strings and logging configurations.
-Services: Scoped services for managing letters, users, roles, files, attachments, notifications, departments, projects, and documents.
-Models: Defines entities like ApplicationUser for identity management.
-Data: Entity Framework Core context (ApplicationDbContext) for database operations.
-
-Contributing
-Contributions are welcome! Please follow these steps:
-
-Fork the repository.
-Create a new branch (git checkout -b feature-branch).
-Commit your changes (git commit -m 'Add new feature').
-Push to the branch (git push origin feature-branch).
-Open a Pull Request.
-
-License
-This project is licensed under the MIT License - see the LICENSE file for details.
-Contact
-For questions or feedback, feel free to open an issue or contact me at [your-email@example.com].
+<div align="center">
+  <p>Built with 💻 and ☕ by <a href="https://github.com/sorusham">Sorush Mehrad</a></p>
+</div>
