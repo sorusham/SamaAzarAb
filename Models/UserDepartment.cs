@@ -12,7 +12,7 @@ namespace MessageForAzarab.Models
         public int Id { get; set; }
         
         // ارتباط با کاربر
-        [Required]
+        [Required(ErrorMessage = "انتخاب کاربر الزامی است")]
         [Display(Name = "کاربر")]
         public string UserId { get; set; } = string.Empty;
         
@@ -20,7 +20,7 @@ namespace MessageForAzarab.Models
         public virtual ApplicationUser User { get; set; } = null!;
         
         // ارتباط با دپارتمان
-        [Required]
+        [Required(ErrorMessage = "انتخاب دپارتمان الزامی است")]
         [Display(Name = "دپارتمان")]
         public int DepartmentId { get; set; }
         
@@ -32,6 +32,7 @@ namespace MessageForAzarab.Models
         public DateTime AssignmentDate { get; set; } = DateTime.Now;
         
         // نقش کاربر در دپارتمان
+        [StringLength(50, ErrorMessage = "نقش نمی‌تواند بیش از 50 کاراکتر باشد")]
         [Display(Name = "نقش")]
         public string? Role { get; set; }
         
@@ -40,6 +41,7 @@ namespace MessageForAzarab.Models
         public bool IsDepartmentManager { get; set; } = false;
         
         // توضیحات
+        [StringLength(500, ErrorMessage = "توضیحات نمی‌تواند بیش از 500 کاراکتر باشد")]
         [Display(Name = "توضیحات")]
         public string? Description { get; set; }
     }

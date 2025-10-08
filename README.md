@@ -1,103 +1,174 @@
-<div align="center">
-  <h1>SamaAzarAb: Engineering Document Management System</h1>
-  <p>A robust .NET MVC web application for managing engineering documents, revisions, and department workflows.</p>
-  <img src="https://img.shields.io/badge/.NET-6.0-blueviolet" alt=".NET 6.0">
-  <img src="https://img.shields.io/badge/License-Apache%202.0-brightgreen" alt="Apache 2.0 License">
-</div>
+# سیستم مدیریت مدارک مهندسی
 
-## ✨ Features
-- 📄 **Document & Revision Management**: Upload, track, and manage engineering documents with revision history.
-- 🔔 **Notification System**: Real-time alerts for document updates, revisions, and approvals.
-- 🔐 **Authentication & Authorization**: Role-based access control (Admin, User, Designer, Checker, Approver, DCC) using ASP.NET Identity.
-- 🏢 **Department & Project Allocation**: Assign projects to departments for streamlined workflows.
-- 📎 **File Management**: Secure storage and retrieval for document attachments.
-- 🎨 **Themed UI**: Responsive and customizable interface with Bootswatch.
-- 📊 **Excel Processing**: Tools for handling Excel-based data.
+یک سیستم جامع و مدرن برای مدیریت مدارک مهندسی با قابلیت‌های پیشرفته و رابط کاربری زیبا.
 
-## 🛠 Tech Stack
-<table>
-  <tr>
-    <th>Category</th>
-    <th>Technology</th>
-  </tr>
-  <tr>
-    <td>Backend</td>
-    <td>.NET MVC, C#</td>
-  </tr>
-  <tr>
-    <td>Frontend</td>
-    <td>Bootswatch, HTML, CSS, JavaScript</td>
-  </tr>
-  <tr>
-    <td>Database</td>
-    <td>SQLite (configurable for SQL Server)</td>
-  </tr>
-  <tr>
-    <td>Authentication</td>
-    <td>ASP.NET Identity</td>
-  </tr>
-</table>
+## ✨ ویژگی‌های کلیدی
 
-## 🚀 Getting Started
+- 🏗️ **مدیریت مدارک**: ثبت، ویرایش و پیگیری مدارک مهندسی
+- 📁 **مدیریت نسخه‌ها**: کنترل نسخه‌های مختلف مدارک
+- 📎 **پیوست فایل**: آپلود و مدیریت فایل‌های پیوست
+- 👥 **مدیریت کاربران**: سیستم احراز هویت و مدیریت نقش‌ها
+- 🏢 **دپارتمان‌ها**: سازماندهی مدارک بر اساس دپارتمان
+- 📊 **گزارش‌گیری**: گزارش‌های جامع از وضعیت مدارک
+- 🌙 **تم تاریک/روشن**: پشتیبانی از دو تم مختلف
+- 📱 **Responsive**: سازگار با تمام دستگاه‌ها
 
-### Prerequisites
-- .NET SDK 6.0 or later
-- SQLite (or another supported database)
+## 🚀 تکنولوژی‌های استفاده شده
+
+- **Backend**: ASP.NET Core 9.0
+- **Frontend**: Bootstrap 5, jQuery, DataTables
+- **Database**: SQLite
+- **Authentication**: ASP.NET Core Identity
+- **UI Framework**: Bootstrap 5 RTL
+- **Icons**: Bootstrap Icons
+- **Font**: Vazir (فونت فارسی)
+
+## 📋 پیش‌نیازها
+
+- .NET 9.0 SDK
+- Visual Studio 2022 یا VS Code
 - Git
 
-### Installation
-1. **Clone the Repository**:
-   ```bash
-   git clone https://github.com/sorusham/SamaAzarAb.git
-   cd SamaAzarAb
-   ```
-2. **Restore Dependencies**:
-   ```bash
-   dotnet restore
-   ```
-3. **Configure Database**:
-   - Update `appsettings.json` with your connection string:
-     ```json
-     "ConnectionStrings": {
-       "DefaultConnection": "Data Source=MessageForAzarab.db"
-     }
-     ```
-4. **Apply Migrations**:
-   ```bash
-   dotnet ef migrations add InitialCreate
-   dotnet ef database update
-   ```
-5. **Run the Application**:
-   ```bash
-   dotnet run
-   ```
-6. Open `https://localhost:5001` in your browser.
+## 🛠️ نصب و راه‌اندازی
 
-### Default Admin Account
-- **Email**: `admin@example.com`
-- **Password**: `Admin@123`
-- **Roles**: Admin, DCC
+### 1. کلون کردن پروژه
 
-## 📂 Project Structure
-- **`Program.cs`**: Configures services, middleware, and initializes roles/users.
-- **`appsettings.json`**: Manages connection strings and logging.
-- **`Services`**: Scoped services for Letters, Users, Roles, Files, Attachments, Notifications, Departments, Projects, and Documents.
-- **`Models`**: Entities like `ApplicationUser` for identity management.
-- **`Data`**: EF Core context (`ApplicationDbContext`) for database operations.
+```bash
+git clone <repository-url>
+cd MessageForAzarab
+```
 
-## 🤝 Contributing
-1. Fork the repository.
-2. Create a branch: `git checkout -b feature-branch`
-3. Commit changes: `git commit -m 'Add feature'`
-4. Push: `git push origin feature-branch`
-5. Open a Pull Request.
+### 2. نصب وابستگی‌ها
 
-## 📜 License
-This project is licensed under the [Apache License 2.0](LICENSE).
+```bash
+dotnet restore
+```
 
-## 📧 Contact
-For questions or feedback, reach out at [sorushmehrad@gmail.com](mailto:sorushmehrad@gmail.com) or open an issue.
+### 3. ایجاد دیتابیس
 
-<div align="center">
-  <p>Built with 💻 and ☕ by <a href="https://github.com/sorusham">Soroush Mehrad</a></p>
-</div>
+```bash
+dotnet ef database update
+```
+
+### 4. اجرای پروژه
+
+```bash
+dotnet run
+```
+
+پروژه در آدرس `https://localhost:5001` در دسترس خواهد بود.
+
+## 🐳 اجرا با Docker
+
+### 1. ساخت و اجرای کانتینر
+
+```bash
+docker-compose up -d
+```
+
+### 2. دسترسی به برنامه
+
+- HTTP: `http://localhost`
+- HTTPS: `https://localhost` (در صورت تنظیم SSL)
+
+## 👤 حساب کاربری پیش‌فرض
+
+- **ایمیل**: admin@example.com
+- **رمز عبور**: Admin@123
+
+## 📁 ساختار پروژه
+
+```
+MessageForAzarab/
+├── Controllers/          # کنترلرهای MVC
+├── Models/              # مدل‌های داده
+├── Views/               # صفحات Razor
+├── Services/            # سرویس‌های کسب‌وکار
+├── Data/                # Context و Migration ها
+├── wwwroot/             # فایل‌های استاتیک
+│   ├── css/            # استایل‌ها
+│   ├── js/             # اسکریپت‌ها
+│   └── uploads/        # فایل‌های آپلود شده
+└── Areas/              # Identity Area
+```
+
+## 🔧 تنظیمات
+
+### فایل‌های پیکربندی
+
+- `appsettings.json`: تنظیمات عمومی
+- `appsettings.Development.json`: تنظیمات محیط توسعه
+- `appsettings.Production.json`: تنظیمات محیط تولید
+
+### متغیرهای محیطی
+
+```bash
+ASPNETCORE_ENVIRONMENT=Production
+ASPNETCORE_URLS=http://+:80
+```
+
+## 🔒 امنیت
+
+- ✅ احراز هویت با ASP.NET Core Identity
+- ✅ مجوزدهی مبتنی بر نقش
+- ✅ اعتبارسنجی ورودی‌ها
+- ✅ محافظت در برابر CSRF
+- ✅ محدودیت حجم فایل
+- ✅ بررسی نوع فایل
+
+## 📊 عملکرد
+
+- ✅ فشرده‌سازی پاسخ‌ها
+- ✅ کش کردن فایل‌های استاتیک
+- ✅ بهینه‌سازی کوئری‌های دیتابیس
+- ✅ استفاده از Index ها
+- ✅ مدیریت حافظه
+
+## 🌐 پشتیبانی از زبان‌ها
+
+- ✅ فارسی (RTL)
+- ✅ انگلیسی (LTR)
+
+## 📱 پشتیبانی از دستگاه‌ها
+
+- ✅ دسکتاپ
+- ✅ تبلت
+- ✅ موبایل
+
+## 🔄 نسخه‌ها
+
+### نسخه 2.0.0 (فعلی)
+- بهینه‌سازی کامل کد
+- بهبود UI/UX
+- اضافه کردن تم تاریک
+- بهبود امنیت
+- بهینه‌سازی عملکرد
+
+### نسخه 1.0.0
+- نسخه اولیه سیستم
+
+## 🤝 مشارکت
+
+برای مشارکت در پروژه:
+
+1. Fork کنید
+2. شاخه جدید ایجاد کنید (`git checkout -b feature/amazing-feature`)
+3. تغییرات را commit کنید (`git commit -m 'Add amazing feature'`)
+4. Push کنید (`git push origin feature/amazing-feature`)
+5. Pull Request ایجاد کنید
+
+## 📝 مجوز
+
+این پروژه تحت مجوز MIT منتشر شده است. برای جزئیات بیشتر فایل `LICENSE` را مطالعه کنید.
+
+## 📞 پشتیبانی
+
+برای گزارش باگ یا درخواست ویژگی جدید، لطفاً issue ایجاد کنید.
+
+## 🙏 تشکر
+
+از تمام کسانی که در توسعه این پروژه مشارکت داشته‌اند، تشکر می‌کنیم.
+
+---
+
+**توسعه یافته با ❤️ برای جامعه مهندسی ایران**

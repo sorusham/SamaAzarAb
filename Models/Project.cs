@@ -9,14 +9,17 @@ namespace MessageForAzarab.Models
         [Key]
         public int Id { get; set; } // معادل SiProject
         
-        [Required]
+        [Required(ErrorMessage = "کد پروژه الزامی است")]
+        [StringLength(50, ErrorMessage = "کد پروژه نمی‌تواند بیش از 50 کاراکتر باشد")]
         [Display(Name = "کد پروژه")]
         public string ProjectCode { get; set; } = string.Empty; // معادل cuproject
         
-        [Required]
+        [Required(ErrorMessage = "نام پروژه الزامی است")]
+        [StringLength(200, ErrorMessage = "نام پروژه نمی‌تواند بیش از 200 کاراکتر باشد")]
         [Display(Name = "نام پروژه")]
         public string Name { get; set; } = string.Empty; // معادل tpproject
         
+        [StringLength(1000, ErrorMessage = "شرح پروژه نمی‌تواند بیش از 1000 کاراکتر باشد")]
         [Display(Name = "شرح پروژه")]
         public string? Description { get; set; }
         

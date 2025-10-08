@@ -9,6 +9,7 @@ using MessageForAzarab.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Globalization;
 using MessageForAzarab.Services.Interface;
+using Microsoft.Extensions.Logging;
 
 namespace MessageForAzarab.Services
 {
@@ -36,80 +37,172 @@ namespace MessageForAzarab.Services
         private const int MAX_TITLE_LENGTH = 200;
         private const int MAX_NOTIFICATION_LENGTH = 500;
         private const int MAX_INFORMATION_LENGTH = 1000;
+        private const int MAX_ROWS_PER_PROCESSING = 1000;
+        private const int CACHE_EXPIRY_MINUTES = 30;
 
         private readonly ApplicationDbContext _context;
         private readonly PersianCalendar _persianCalendar;
+        private readonly ILogger<ExcelProcessingService> _logger;
 
-        public ExcelProcessingService(ApplicationDbContext context)
+        public ExcelProcessingService(ApplicationDbContext context, ILogger<ExcelProcessingService> logger)
         {
             _context = context;
             _persianCalendar = new PersianCalendar();
+            _logger = logger;
         }
 
         public async Task<List<ExcelPreviewRow>> PreviewExcelDataAsync(Stream excelStream)
         {
-            var previewRows = new List<ExcelPreviewRow>();
-            using var workbook = new XLWorkbook(excelStream);
-            var worksheet = workbook.Worksheet(1);
-
-            var lastRow = worksheet.LastRowUsed().RowNumber();
-            var existingDocCodes = await _context.BaseDocuments
-                .Select(d => new { d.DocCode, d.AzarabCode })
-                .ToListAsync();
-
-            for (int row = DATA_START_ROW; row <= lastRow; row++)
+            try
             {
-                try
+                _logger.LogInformation("شروع پردازش فایل اکسل");
+                
+                var previewRows = new List<ExcelPreviewRow>();
+                using var workbook = new XLWorkbook(excelStream);
+                
+                if (workbook.Worksheets.Count == 0)
                 {
-                    var docName = worksheet.Cell(row, COL_IDX_DOC_NAME).GetString()?.Trim() ?? string.Empty;
-                    var azarabCode = worksheet.Cell(row, COL_IDX_AZARAB).GetString()?.Trim() ?? string.Empty;
-                    var vendorCode = worksheet.Cell(row, COL_IDX_VENDOR).GetString()?.Trim() ?? string.Empty;
-                    
-                    if (string.IsNullOrWhiteSpace(docName) && string.IsNullOrWhiteSpace(azarabCode) && string.IsNullOrWhiteSpace(vendorCode))
-                        continue;
-
-                    var previewRow = new ExcelPreviewRow
-                    {
-                        RowNumber = row,
-                        Title = docName,
-                        AzarabCode = azarabCode,
-                        ClientDocCode = vendorCode,
-                        DocNumber = worksheet.Cell(row, COL_IDX_DOC_NUMBER).GetString()?.Trim() ?? string.Empty,
-                        Notification = worksheet.Cell(row, COL_IDX_NOTIFICATION).GetString()?.Trim() ?? string.Empty,
-                        DocDate = worksheet.Cell(row, COL_IDX_DOC_DATE).GetString()?.Trim() ?? string.Empty,
-                        PlanDate = worksheet.Cell(row, COL_IDX_PLAN_DATE).GetString()?.Trim() ?? string.Empty,
-                        FirstSubmit = worksheet.Cell(row, COL_IDX_FIRST_SUBMIT).GetString()?.Trim() ?? string.Empty,
-                        NC = worksheet.Cell(row, COL_IDX_NC).GetString()?.Trim() ?? string.Empty,
-                        AN = worksheet.Cell(row, COL_IDX_AN).GetString()?.Trim() ?? string.Empty,
-                        CM = worksheet.Cell(row, COL_IDX_CM).GetString()?.Trim() ?? string.Empty,
-                        Reject = worksheet.Cell(row, COL_IDX_REJECT).GetString()?.Trim() ?? string.Empty,
-                        Information = worksheet.Cell(row, COL_IDX_INFORMATION).GetString()?.Trim() ?? string.Empty,
-                        Progress = worksheet.Cell(row, COL_IDX_PROGRESS).GetString()?.Trim() ?? string.Empty,
-                        Responsible = worksheet.Cell(row, COL_IDX_RESPONSIBLE).GetString()?.Trim() ?? string.Empty,
-                        DocCode = azarabCode,
-                        IsDuplicate = existingDocCodes.Any(d => d.DocCode == azarabCode || d.AzarabCode == azarabCode),
-                        IsSelected = true,
-                        HasError = false
-                    };
-
-                    ValidateRow(previewRow, existingDocCodes);
-                    previewRows.Add(previewRow);
+                    _logger.LogWarning("فایل اکسل هیچ شیتی ندارد");
+                    return previewRows;
                 }
-                catch (Exception ex)
+
+                var worksheet = workbook.Worksheet(1);
+                var lastRow = worksheet.LastRowUsed()?.RowNumber() ?? 0;
+                
+                if (lastRow < DATA_START_ROW)
                 {
-                    previewRows.Add(new ExcelPreviewRow
+                    _logger.LogWarning("فایل اکسل داده‌ای برای پردازش ندارد");
+                    return previewRows;
+                }
+
+                var totalRows = lastRow - DATA_START_ROW + 1;
+                _logger.LogInformation($"پردازش {totalRows} سطر از فایل اکسل");
+
+                // Validate row limit for performance
+                if (totalRows > MAX_ROWS_PER_PROCESSING)
+                {
+                    _logger.LogWarning($"تعداد سطرها ({totalRows}) بیش از حد مجاز ({MAX_ROWS_PER_PROCESSING}) است");
+                    throw new InvalidOperationException($"تعداد سطرها نمی‌تواند بیش از {MAX_ROWS_PER_PROCESSING} باشد. لطفاً فایل را به بخش‌های کوچک‌تر تقسیم کنید.");
+                }
+
+                // Cache existing document codes for performance
+                var existingDocCodes = await _context.BaseDocuments
+                    .AsNoTracking()
+                    .Select(d => new { d.DocCode, d.AzarabCode })
+                    .ToListAsync();
+
+                int processedRows = 0;
+                int errorRows = 0;
+
+                // Process rows in batches for better performance
+                for (int row = DATA_START_ROW; row <= lastRow; row++)
+                {
+                    try
                     {
-                        RowNumber = row,
-                        DocCode = $"Row {row}",
-                        Title = "Error",
-                        ValidationMessage = $"خطا در خواندن سطر {row}: {ex.Message}",
-                        HasError = true,
-                        IsSelected = false
-                    });
+                        var docName = GetCellValue(worksheet, row, COL_IDX_DOC_NAME);
+                        var azarabCode = GetCellValue(worksheet, row, COL_IDX_AZARAB);
+                        var vendorCode = GetCellValue(worksheet, row, COL_IDX_VENDOR);
+                        
+                        if (string.IsNullOrWhiteSpace(docName) && string.IsNullOrWhiteSpace(azarabCode) && string.IsNullOrWhiteSpace(vendorCode))
+                            continue;
+
+                        var previewRow = new ExcelPreviewRow
+                        {
+                            SheetName = worksheet.Name,
+                            RowNumber = row,
+                            Title = docName,
+                            DocName = docName,
+                            AzarabCode = azarabCode,
+                            ClientDocCode = vendorCode,
+                            DocNumber = GetCellValue(worksheet, row, COL_IDX_DOC_NUMBER),
+                            Notification = GetCellValue(worksheet, row, COL_IDX_NOTIFICATION),
+                            DocDate = GetCellValue(worksheet, row, COL_IDX_DOC_DATE),
+                            PlanDate = GetCellValue(worksheet, row, COL_IDX_PLAN_DATE),
+                            FirstSubmit = GetCellValue(worksheet, row, COL_IDX_FIRST_SUBMIT),
+                            NC = GetCellValue(worksheet, row, COL_IDX_NC),
+                            AN = GetCellValue(worksheet, row, COL_IDX_AN),
+                            CM = GetCellValue(worksheet, row, COL_IDX_CM),
+                            Reject = GetCellValue(worksheet, row, COL_IDX_REJECT),
+                            Information = GetCellValue(worksheet, row, COL_IDX_INFORMATION),
+                            Progress = GetCellValue(worksheet, row, COL_IDX_PROGRESS),
+                            Responsible = GetCellValue(worksheet, row, COL_IDX_RESPONSIBLE),
+                            DocCode = azarabCode,
+                            // Map additional properties for compatibility
+                            POI = GetCellValue(worksheet, row, COL_IDX_NOTIFICATION), // Map to available column
+                            Discipline = GetCellValue(worksheet, row, COL_IDX_DOC_NUMBER), // Map to available column
+                            DocType = GetCellValue(worksheet, row, COL_IDX_DOC_DATE), // Map to available column
+                            AsBuild = GetCellValue(worksheet, row, COL_IDX_PLAN_DATE), // Map to available column
+                            Comment = GetCellValue(worksheet, row, COL_IDX_INFORMATION), // Map to available column
+                            Weight = GetCellValue(worksheet, row, COL_IDX_PROGRESS), // Map to available column
+                            AFC = GetCellValue(worksheet, row, COL_IDX_NC), // Map to available column
+                            Plan = GetCellValue(worksheet, row, COL_IDX_PLAN_DATE), // Map to available column
+                            Remin = GetCellValue(worksheet, row, COL_IDX_FIRST_SUBMIT), // Map to available column
+                            FinalBook = GetCellValue(worksheet, row, COL_IDX_AN), // Map to available column
+                            IsDuplicate = existingDocCodes.Any(d => d.DocCode == azarabCode || d.AzarabCode == azarabCode),
+                            IsSelected = true,
+                            HasError = false
+                        };
+
+                        ValidateRow(previewRow, existingDocCodes);
+                        previewRows.Add(previewRow);
+                        processedRows++;
+
+                        if (previewRow.HasError)
+                            errorRows++;
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, $"خطا در پردازش سطر {row}");
+                        previewRows.Add(new ExcelPreviewRow
+                        {
+                            RowNumber = row,
+                            DocCode = $"Row {row}",
+                            Title = "Error",
+                            ValidationMessage = $"خطا در خواندن سطر {row}: {ex.Message}",
+                            HasError = true,
+                            IsSelected = false
+                        });
+                        errorRows++;
+                    }
+                }
+
+                _logger.LogInformation($"پردازش فایل اکسل تکمیل شد. {processedRows} سطر پردازش شد، {errorRows} سطر دارای خطا");
+                return previewRows;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "خطای کلی در پردازش فایل اکسل");
+                throw new InvalidOperationException($"خطا در پردازش فایل اکسل: {ex.Message}", ex);
+            }
+        }
+
+        private string GetCellValue(IXLWorksheet worksheet, int row, int column)
+        {
+            try
+            {
+                var cell = worksheet.Cell(row, column);
+                if (cell.IsEmpty())
+                    return string.Empty;
+
+                // Handle different cell types
+                if (cell.DataType == XLDataType.DateTime)
+                {
+                    return cell.GetDateTime().ToString("yyyy/MM/dd");
+                }
+                else if (cell.DataType == XLDataType.Number)
+                {
+                    return cell.GetDouble().ToString();
+                }
+                else
+                {
+                    return cell.GetString()?.Trim() ?? string.Empty;
                 }
             }
-
-            return previewRows;
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, $"خطا در خواندن سلول ({row}, {column})");
+                return string.Empty;
+            }
         }
 
         private void ValidateRow(ExcelPreviewRow row, IEnumerable<dynamic> existingDocCodes)
@@ -248,63 +341,161 @@ namespace MessageForAzarab.Services
 
             try
             {
-                foreach (var row in selectedRows.Where(r => r.IsSelected && !r.HasError))
+                _logger.LogInformation($"شروع وارد کردن {selectedRows.Count} رکورد انتخاب شده");
+
+                // Validate input parameters
+                if (selectedRows == null || !selectedRows.Any())
                 {
-                    var newBaseDocument = new BaseDocument
-                    {
-                        Title = row.Title,
-                        DocCode = row.DocCode,
-                        AzarabCode = row.AzarabCode,
-                        ClientDocCode = row.ClientDocCode,
-                        DocNumber = row.DocNumber,
-                        Notification = row.Notification,
-                        DocDate = row.DocDate,
-                        PlanDate = row.PlanDate,
-                        FirstSubmit = row.FirstSubmit,
-                        NC = row.NC,
-                        AN = row.AN,
-                        CM = row.CM,
-                        Reject = row.Reject,
-                        Information = row.Information,
-                        Progress = row.Progress,
-                        Responsible = row.Responsible,
-                        DepartmentId = departmentId,
-                        ProjectId = projectId,
-                        CreatorId = creatorUserId,
-                        CreationDate = DateTime.Now,
-                       
-                        LastModificationDate = DateTime.Now,
-                        Status = "E",
-                        CurrentRevision = 0,
-                        IsActive = true,
-                        IssueStatus = DocumentIssueStatus.NotIssuable,
-                        ReviewStage = DocumentReviewStage.Designer
-                    };
-
-                    // Create initial version
-                    var newVersion = new DocumentVersion
-                    {
-                        BaseDocument = newBaseDocument,
-                        RevisionNumber = 0,
-                        CreationDate = DateTime.Now,
-                        // Fix for CS0029: Cannot implicitly convert type 'int' to 'string'
-                        // The issue is that the `CreatorId` property in `DocumentVersion` is of type `string`,
-                        // but the code is assigning an `int` value (`creatorUserId`) to it.
-                        // To fix this, we need to convert `creatorUserId` to a string.
-
-                        CreatorId = creatorUserId.ToString(),
-                        
-                        Status = "O"
-                    };
-
-                    newBaseDocument.DocumentVersions.Add(newVersion);
-                    documentsToAdd.Add(newBaseDocument);
+                    result.IsSuccess = false;
+                    result.ErrorMessages.Add("هیچ رکوردی برای وارد کردن انتخاب نشده است.");
+                    return result;
                 }
 
-                // Save all documents in one transaction
-                _context.BaseDocuments.AddRange(documentsToAdd);
-                await _context.SaveChangesAsync();
-                result.SuccessCount = documentsToAdd.Count;
+                if (departmentId <= 0 || projectId <= 0)
+                {
+                    result.IsSuccess = false;
+                    result.ErrorMessages.Add("شناسه دپارتمان یا پروژه معتبر نیست.");
+                    return result;
+                }
+
+                if (string.IsNullOrWhiteSpace(creatorUserId))
+                {
+                    result.IsSuccess = false;
+                    result.ErrorMessages.Add("شناسه کاربر ایجادکننده معتبر نیست.");
+                    return result;
+                }
+
+                // Verify department and project exist
+                var departmentExists = await _context.Departments.AnyAsync(d => d.Id == departmentId);
+                var projectExists = await _context.Projects.AnyAsync(p => p.Id == projectId);
+
+                if (!departmentExists)
+                {
+                    result.IsSuccess = false;
+                    result.ErrorMessages.Add("دپارتمان انتخاب شده یافت نشد.");
+                    return result;
+                }
+
+                if (!projectExists)
+                {
+                    result.IsSuccess = false;
+                    result.ErrorMessages.Add("پروژه انتخاب شده یافت نشد.");
+                    return result;
+                }
+
+                // Filter valid rows
+                var validRows = selectedRows.Where(r => r.IsSelected && !r.HasError).ToList();
+                _logger.LogInformation($"{validRows.Count} رکورد معتبر برای وارد کردن یافت شد");
+
+                // Pre-check for duplicates to avoid database calls in loop
+                var docCodesToCheck = validRows.Select(r => r.DocCode).Concat(validRows.Select(r => r.AzarabCode)).Distinct().ToList();
+                var existingDocs = await _context.BaseDocuments
+                    .AsNoTracking()
+                    .Where(d => docCodesToCheck.Contains(d.DocCode) || docCodesToCheck.Contains(d.AzarabCode))
+                    .Select(d => new { d.DocCode, d.AzarabCode })
+                    .ToListAsync();
+
+                using var transaction = await _context.Database.BeginTransactionAsync();
+                try
+                {
+                    // Process in batches for better performance
+                    var batches = validRows.Chunk(BATCH_SIZE);
+                    
+                    foreach (var batch in batches)
+                    {
+                        foreach (var row in batch)
+                        {
+                            try
+                            {
+                                // Check for duplicate DocCode using cached data
+                                var isDuplicate = existingDocs.Any(d => d.DocCode == row.DocCode || d.AzarabCode == row.AzarabCode);
+                                
+                                if (isDuplicate)
+                                {
+                                    result.ErrorMessages.Add($"کد سند {row.DocCode} قبلاً در سیستم ثبت شده است (ردیف {row.RowNumber})");
+                                    continue;
+                                }
+
+                                var newBaseDocument = new BaseDocument
+                                {
+                                    Title = row.Title,
+                                    DocCode = row.DocCode,
+                                    AzarabCode = row.AzarabCode,
+                                    ClientDocCode = row.ClientDocCode,
+                                    DocNumber = row.DocNumber,
+                                    Notification = row.Notification,
+                                    DocDate = row.DocDate,
+                                    PlanDate = row.PlanDate,
+                                    FirstSubmit = row.FirstSubmit,
+                                    NC = row.NC,
+                                    AN = row.AN,
+                                    CM = row.CM,
+                                    Reject = row.Reject,
+                                    Information = row.Information,
+                                    Progress = row.Progress,
+                                    Responsible = row.Responsible,
+                                    DepartmentId = departmentId,
+                                    ProjectId = projectId,
+                                    CreatorId = creatorUserId,
+                                    CreationDate = DateTime.Now,
+                                    LastModificationDate = DateTime.Now,
+                                    Status = "E",
+                                    CurrentRevision = 0,
+                                    IsActive = true,
+                                    IssueStatus = DocumentIssueStatus.NotIssuable,
+                                    ReviewStage = DocumentReviewStage.Designer
+                                };
+
+                                // Create initial version
+                                var newVersion = new DocumentVersion
+                                {
+                                    BaseDocument = newBaseDocument,
+                                    RevisionNumber = 0,
+                                    CreationDate = DateTime.Now,
+                                    CreatorId = creatorUserId,
+                                    Status = "O"
+                                };
+
+                                newBaseDocument.DocumentVersions.Add(newVersion);
+                                documentsToAdd.Add(newBaseDocument);
+                            }
+                            catch (Exception ex)
+                            {
+                                _logger.LogError(ex, $"خطا در ایجاد سند برای ردیف {row.RowNumber}");
+                                result.ErrorMessages.Add($"خطا در ایجاد سند برای ردیف {row.RowNumber}: {ex.Message}");
+                            }
+                        }
+                    }
+
+                    if (documentsToAdd.Any())
+                    {
+                        // Save in batches for better performance
+                        var documentBatches = documentsToAdd.Chunk(BATCH_SIZE);
+                        foreach (var docBatch in documentBatches)
+                        {
+                            _context.BaseDocuments.AddRange(docBatch);
+                            await _context.SaveChangesAsync();
+                        }
+                        
+                        await transaction.CommitAsync();
+                        
+                        result.SuccessCount = documentsToAdd.Count;
+                        _logger.LogInformation($"{result.SuccessCount} سند با موفقیت وارد شد");
+                    }
+                    else
+                    {
+                        await transaction.RollbackAsync();
+                        result.IsSuccess = false;
+                        result.ErrorMessages.Add("هیچ سند معتبری برای وارد کردن یافت نشد.");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    await transaction.RollbackAsync();
+                    _logger.LogError(ex, "خطا در تراکنش وارد کردن اسناد");
+                    throw;
+                }
+
                 result.ErrorCount = selectedRows.Count(r => r.HasError || !r.IsSelected);
                 if (result.ErrorCount > 0)
                 {
@@ -313,6 +504,7 @@ namespace MessageForAzarab.Services
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "خطای کلی در وارد کردن اطلاعات");
                 result.IsSuccess = false;
                 result.ErrorMessages.Add($"خطای کلی در وارد کردن اطلاعات: {ex.Message}");
             }

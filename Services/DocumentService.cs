@@ -78,9 +78,33 @@ namespace MessageForAzarab.Services
         
         public async Task<BaseDocument> CreateDocumentAsync(BaseDocument document)
         {
-            _context.BaseDocuments.Add(document);
-            await _context.SaveChangesAsync();
-            return document;
+            try
+            {
+                // بررسی تکراری بودن کد مدرک
+                var existingDoc = await _context.BaseDocuments
+                    .FirstOrDefaultAsync(d => d.DocCode == document.DocCode);
+                
+                if (existingDoc != null)
+                {
+                    throw new InvalidOperationException($"سند با کد {document.DocCode} قبلاً ثبت شده است.");
+                }
+
+                // تنظیم مقادیر پیش‌فرض
+                document.CreationDate = DateTime.Now;
+                document.LastModificationDate = DateTime.Now;
+                document.Status = "E"; // فعال
+                document.IsActive = true;
+                document.CurrentRevision = 0;
+
+                _context.BaseDocuments.Add(document);
+                await _context.SaveChangesAsync();
+                
+                return document;
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException($"خطا در ایجاد سند: {ex.Message}", ex);
+            }
         }
         
         public async Task UpdateDocumentAsync(BaseDocument document)
@@ -163,9 +187,51 @@ namespace MessageForAzarab.Services
         
         public async Task<DocumentVersion> CreateDocumentVersionAsync(DocumentVersion version)
         {
-            _context.DocumentVersions.Add(version);
-            await _context.SaveChangesAsync();
-            return version;
+            try
+            {
+                // بررسی وجود سند پایه
+                var baseDocument = await _context.BaseDocuments
+                    .FirstOrDefaultAsync(d => d.Id == version.BaseDocumentId);
+                
+                if (baseDocument == null)
+                {
+                    throw new KeyNotFoundException($"سند پایه با شناسه {version.BaseDocumentId} یافت نشد.");
+                }
+
+                // بررسی وضعیت سند پایه
+                if (baseDocument.Status != "E")
+                {
+                    throw new InvalidOperationException("امکان ایجاد نسخه جدید برای سند غیرفعال وجود ندارد.");
+                }
+
+                // محاسبه شماره نسخه بعدی
+                var maxRevision = await _context.DocumentVersions
+                    .Where(v => v.BaseDocumentId == version.BaseDocumentId)
+                    .MaxAsync(v => (int?)v.RevisionNumber) ?? -1;
+                
+                version.RevisionNumber = maxRevision + 1;
+
+                // تنظیم مقادیر پیش‌فرض
+                version.CreationDate = DateTime.Now;
+                version.Status = "O"; // باز
+                version.IsSent = false;
+                version.IsHidden = false;
+                version.Progress = 0;
+
+                _context.DocumentVersions.Add(version);
+                await _context.SaveChangesAsync();
+
+                // به‌روزرسانی نسخه فعلی در سند پایه
+                baseDocument.CurrentRevision = version.RevisionNumber;
+                baseDocument.LastModificationDate = DateTime.Now;
+                await _context.SaveChangesAsync();
+                
+                return version;
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException($"خطا در ایجاد نسخه سند: {ex.Message}", ex);
+            }
         }
         
         public async Task UpdateDocumentVersionAsync(DocumentVersion version)
@@ -319,39 +385,66 @@ namespace MessageForAzarab.Services
         
         public async Task<DocumentAttachment> CreateDocumentAttachmentAsync(int baseDocumentId, int documentVersionId, IFormFile file)
         {
-            if (file == null || file.Length == 0)
-                throw new ArgumentException("فایل پیوست نامعتبر است.");
-
-            var version = await GetVersionByIdAsync(documentVersionId);
-            if(version == null)
-                throw new KeyNotFoundException($"نسخه سند با شناسه {documentVersionId} یافت نشد.");
-
-            if (version.IsSent)
-                 throw new InvalidOperationException("امکان اضافه کردن پیوست به نسخه ارسال شده وجود ندارد.");
-
-            // ذخیره فایل فیزیکی
-            var relativePath = $"Documents/{baseDocumentId}/{documentVersionId}";
-            var saveResult = await _fileService.SaveFileAsync(file, relativePath);
-
-            // گرفتن کاربر فعلی
-            var userId = _httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.NameIdentifier);
-            
-            // ایجاد رکورد دیتابیس
-            var attachment = new DocumentAttachment
+            try
             {
-                DocumentVersionId = documentVersionId,
-                FileName = saveResult.OriginalFileName,
-                FilePath = saveResult.FullPath, 
-                FileSize = saveResult.FileSize,
-                ContentType = saveResult.ContentType,
-                UploadDate = DateTime.Now,
-                UploaderId = userId
-            };
-            
-            _context.DocumentAttachments.Add(attachment);
-            await _context.SaveChangesAsync();
-            
-            return attachment;
+                // اعتبارسنجی فایل
+                if (file == null || file.Length == 0)
+                    throw new ArgumentException("فایل پیوست نامعتبر است.");
+
+                // بررسی محدودیت حجم فایل (مثلاً 50 مگابایت)
+                const long maxFileSize = 50 * 1024 * 1024; // 50 MB
+                if (file.Length > maxFileSize)
+                    throw new ArgumentException($"حجم فایل نمی‌تواند بیش از {maxFileSize / (1024 * 1024)} مگابایت باشد.");
+
+                // بررسی نوع فایل مجاز
+                var allowedExtensions = new[] { ".pdf", ".doc", ".docx", ".xls", ".xlsx", ".dwg", ".dxf", ".jpg", ".jpeg", ".png" };
+                var fileExtension = Path.GetExtension(file.FileName).ToLowerInvariant();
+                if (!allowedExtensions.Contains(fileExtension))
+                    throw new ArgumentException($"نوع فایل {fileExtension} مجاز نیست. فایل‌های مجاز: {string.Join(", ", allowedExtensions)}");
+
+                // بررسی وجود نسخه سند
+                var version = await GetVersionByIdAsync(documentVersionId);
+                if (version == null)
+                    throw new KeyNotFoundException($"نسخه سند با شناسه {documentVersionId} یافت نشد.");
+
+                // بررسی وضعیت نسخه
+                if (version.IsSent)
+                    throw new InvalidOperationException("امکان اضافه کردن پیوست به نسخه ارسال شده وجود ندارد.");
+
+                // بررسی وجود سند پایه
+                var baseDocument = await _context.BaseDocuments
+                    .FirstOrDefaultAsync(d => d.Id == baseDocumentId);
+                if (baseDocument == null)
+                    throw new KeyNotFoundException($"سند پایه با شناسه {baseDocumentId} یافت نشد.");
+
+                // ذخیره فایل فیزیکی
+                var relativePath = $"Documents/{baseDocumentId}/{documentVersionId}";
+                var saveResult = await _fileService.SaveFileAsync(file, relativePath);
+
+                // گرفتن کاربر فعلی
+                var userId = _httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.NameIdentifier);
+                
+                // ایجاد رکورد دیتابیس
+                var attachment = new DocumentAttachment
+                {
+                    DocumentVersionId = documentVersionId,
+                    FileName = saveResult.OriginalFileName,
+                    FilePath = saveResult.FullPath, 
+                    FileSize = saveResult.FileSize,
+                    ContentType = saveResult.ContentType,
+                    UploadDate = DateTime.Now,
+                    UploaderId = userId
+                };
+                
+                _context.DocumentAttachments.Add(attachment);
+                await _context.SaveChangesAsync();
+                
+                return attachment;
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException($"خطا در ایجاد پیوست سند: {ex.Message}", ex);
+            }
         }
         
         public async Task UpdateDocumentAttachmentAsync(DocumentAttachment attachment)

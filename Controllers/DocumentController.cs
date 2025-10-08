@@ -87,32 +87,65 @@ namespace MessageForAzarab.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(BaseDocument document)
         {
-            if (await _documentService.GetDocumentByCodeAsync(document.DocCode) != null)
+            try
             {
-                ModelState.AddModelError("DocCode", "کد مدرک آذرآبی تکراری است.");
+                // بررسی تکراری بودن کد مدرک
+                if (!string.IsNullOrEmpty(document.DocCode))
+                {
+                    var existingDoc = await _documentService.GetDocumentByCodeAsync(document.DocCode);
+                    if (existingDoc != null)
+                    {
+                        ModelState.AddModelError("DocCode", "کد مدرک آذرآبی تکراری است.");
+                    }
+                }
+
+                // دریافت کاربر فعلی
+                var currentUser = await _userManager.GetUserAsync(User);
+                if (currentUser == null) 
+                {
+                    TempData["ErrorMessage"] = "کاربر وارد شده یافت نشد.";
+                    return Challenge();
+                }
+
+                // مقداردهی فیلدهای سیستم
+                document.CreatorId = currentUser.Id;
+                document.LastModifierId = currentUser.Id;
+                document.CreationDate = DateTime.Now;
+                document.LastModificationDate = DateTime.Now;
+
+                // پاک‌کردن ارورهای غیرضروری
+                ModelState.Remove(nameof(BaseDocument.Creator));
+                ModelState.Remove(nameof(BaseDocument.LastModifier));
+                ModelState.Remove(nameof(BaseDocument.Department));
+                ModelState.Remove(nameof(BaseDocument.Project));
+                ModelState.Remove(nameof(BaseDocument.CreatorId));
+                ModelState.Remove(nameof(BaseDocument.LastModifierId));
+
+                if (ModelState.IsValid)
+                {
+                    var createdDocument = await _documentService.CreateDocumentAsync(document);
+                    
+                    // ارسال اعلان‌ها
+                    await SendNotificationsForNewDocument(createdDocument);
+                    
+                    TempData["SuccessMessage"] = "سند با موفقیت ایجاد شد.";
+                    return RedirectToAction(nameof(Index));
+                }
             }
-            // مقداردهی فیلدهایی که لازم داریم
-            var currentUser = await _userManager.GetUserAsync(User);
-            if (currentUser == null) return Challenge();
-
-            document.CreatorId = currentUser.Id;
-            document.LastModifierId = currentUser.Id;
-            document.CreationDate = DateTime.Now;
-            document.LastModificationDate = DateTime.Now;
-            // پاک‌کردن ارورهای غیرضروری
-            ModelState.Remove(nameof(BaseDocument.Creator));
-            ModelState.Remove(nameof(BaseDocument.LastModifier));
-            ModelState.Remove(nameof(BaseDocument.Department));
-            ModelState.Remove(nameof(BaseDocument.Project));
-            ModelState.Remove(nameof(BaseDocument.CreatorId));
-            ModelState.Remove(nameof(BaseDocument.LastModifierId));
-            if (ModelState.IsValid)
+            catch (Exception ex)
             {
-                
-                if (currentUser == null) return Challenge();
+                TempData["ErrorMessage"] = $"خطا در ایجاد سند: {ex.Message}";
+            }
 
-                await _documentService.CreateDocumentAsync(document);
-                
+            // در صورت خطا، بارگذاری مجدد ViewBag ها
+            await LoadCreateViewBags(document);
+            return View(document);
+        }
+
+        private async Task SendNotificationsForNewDocument(BaseDocument document)
+        {
+            try
+            {
                 if (!string.IsNullOrEmpty(document.CheckerId))
                 {
                     await _notificationService.CreateNotificationAsync(
@@ -134,20 +167,24 @@ namespace MessageForAzarab.Controllers
                         $"/Document/Details/{document.Id}"
                     );
                 }
-                
-                TempData["SuccessMessage"] = "سند با موفقیت ایجاد شد.";
-                return RedirectToAction(nameof(Index));
             }
+            catch (Exception ex)
+            {
+                // لاگ کردن خطا اما ادامه دادن فرآیند
+                Console.WriteLine($"خطا در ارسال اعلان: {ex.Message}");
+            }
+        }
 
+        private async Task LoadCreateViewBags(BaseDocument document)
+        {
             var departments = await _departmentService.GetAllDepartmentsAsync();
             var projects = await _projectService.GetAllProjectsAsync();
             var users = await _userService.GetActiveUsersAsync();
+            
             ViewBag.DepartmentId = new SelectList(departments, "Id", "Name", document.DepartmentId);
             ViewBag.ProjectId = new SelectList(projects, "Id", "ProjectCode", document.ProjectId);
             ViewBag.CheckerId = new SelectList(users, "Id", "FullName", document.CheckerId);
             ViewBag.ApproverId = new SelectList(users, "Id", "FullName", document.ApproverId);
-            
-            return View(document);
         }
 
         // ویرایش سند
@@ -177,61 +214,119 @@ namespace MessageForAzarab.Controllers
             if (id != document.Id)
                 return NotFound();
 
-            var existingDocWithCode = await _documentService.GetDocumentByCodeAsync(document.DocCode);
-            if (existingDocWithCode != null && existingDocWithCode.Id != id)
+            try
             {
-                ModelState.AddModelError("DocCode", "کد مدرک آذرآبی تکراری است.");
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
+                // بررسی تکراری بودن کد مدرک
+                if (!string.IsNullOrEmpty(document.DocCode))
                 {
-                    var oldDocument = await _documentService.GetDocumentByIdAsync(id);
-                    if (oldDocument == null) return NotFound();
+                    var existingDocWithCode = await _documentService.GetDocumentByCodeAsync(document.DocCode);
+                    if (existingDocWithCode != null && existingDocWithCode.Id != id)
+                    {
+                        ModelState.AddModelError("DocCode", "کد مدرک آذرآبی تکراری است.");
+                    }
+                }
 
+                // دریافت کاربر فعلی
+                var currentUser = await _userManager.GetUserAsync(User);
+                if (currentUser == null)
+                {
+                    TempData["ErrorMessage"] = "کاربر وارد شده یافت نشد.";
+                    return Challenge();
+                }
+
+                // دریافت سند قدیمی
+                var oldDocument = await _documentService.GetDocumentByIdAsync(id);
+                if (oldDocument == null) 
+                {
+                    TempData["ErrorMessage"] = "سند مورد نظر یافت نشد.";
+                    return NotFound();
+                }
+
+                // به‌روزرسانی فیلدهای سیستم
+                document.LastModifierId = currentUser.Id;
+                document.LastModificationDate = DateTime.Now;
+                document.CreatorId = oldDocument.CreatorId; // حفظ ایجادکننده اصلی
+                document.CreationDate = oldDocument.CreationDate; // حفظ تاریخ ایجاد اصلی
+
+                // پاک‌کردن ارورهای غیرضروری
+                ModelState.Remove(nameof(BaseDocument.Creator));
+                ModelState.Remove(nameof(BaseDocument.LastModifier));
+                ModelState.Remove(nameof(BaseDocument.Department));
+                ModelState.Remove(nameof(BaseDocument.Project));
+                ModelState.Remove(nameof(BaseDocument.CreatorId));
+                ModelState.Remove(nameof(BaseDocument.LastModifierId));
+
+                if (ModelState.IsValid)
+                {
                     await _documentService.UpdateDocumentAsync(document);
                     
-                    if (!string.IsNullOrEmpty(document.CheckerId) && oldDocument.CheckerId != document.CheckerId)
-                    {
-                        await _notificationService.CreateNotificationAsync(
-                            document.CheckerId,
-                            "ارجاع سند برای بررسی",
-                            $"سند «{document.Title}» ({document.DocCode}) برای بررسی به شما ارجاع شد.",
-                            NotificationType.DocumentUpdate,
-                            $"/Document/Details/{document.Id}"
-                        );
-                    }
-                    
-                    if (!string.IsNullOrEmpty(document.ApproverId) && oldDocument.ApproverId != document.ApproverId)
-                    {
-                        await _notificationService.CreateNotificationAsync(
-                            document.ApproverId,
-                            "ارجاع سند برای تأیید",
-                            $"سند «{document.Title}» ({document.DocCode}) برای تأیید به شما ارجاع شد.",
-                            NotificationType.DocumentUpdate,
-                            $"/Document/Details/{document.Id}"
-                        );
-                    }
+                    // ارسال اعلان‌ها در صورت تغییر مسئولان
+                    await SendNotificationsForUpdatedDocument(document, oldDocument);
 
                     TempData["SuccessMessage"] = "سند با موفقیت به‌روزرسانی شد.";
                     return RedirectToAction(nameof(Index));
                 }
-                catch (KeyNotFoundException) { return NotFound(); }
-                catch (Exception ex)
-                {
-                    ModelState.AddModelError("", $"خطا در به‌روزرسانی سند: {ex.Message}");
-                }
+            }
+            catch (KeyNotFoundException) 
+            { 
+                TempData["ErrorMessage"] = "سند مورد نظر یافت نشد.";
+                return NotFound(); 
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"خطا در به‌روزرسانی سند: {ex.Message}";
             }
 
+            // در صورت خطا، بارگذاری مجدد ViewBag ها
+            await LoadEditViewBags(document);
+            return View(document);
+        }
+
+        private async Task SendNotificationsForUpdatedDocument(BaseDocument newDocument, BaseDocument oldDocument)
+        {
+            try
+            {
+                // اعلان برای تغییر صحه‌گذار
+                if (!string.IsNullOrEmpty(newDocument.CheckerId) && oldDocument.CheckerId != newDocument.CheckerId)
+                {
+                    await _notificationService.CreateNotificationAsync(
+                        newDocument.CheckerId,
+                        "ارجاع سند برای بررسی",
+                        $"سند «{newDocument.Title}» ({newDocument.DocCode}) برای بررسی به شما ارجاع شد.",
+                        NotificationType.DocumentUpdate,
+                        $"/Document/Details/{newDocument.Id}"
+                    );
+                }
+                
+                // اعلان برای تغییر تصدیق‌کننده
+                if (!string.IsNullOrEmpty(newDocument.ApproverId) && oldDocument.ApproverId != newDocument.ApproverId)
+                {
+                    await _notificationService.CreateNotificationAsync(
+                        newDocument.ApproverId,
+                        "ارجاع سند برای تأیید",
+                        $"سند «{newDocument.Title}» ({newDocument.DocCode}) برای تأیید به شما ارجاع شد.",
+                        NotificationType.DocumentUpdate,
+                        $"/Document/Details/{newDocument.Id}"
+                    );
+                }
+            }
+            catch (Exception ex)
+            {
+                // لاگ کردن خطا اما ادامه دادن فرآیند
+                Console.WriteLine($"خطا در ارسال اعلان: {ex.Message}");
+            }
+        }
+
+        private async Task LoadEditViewBags(BaseDocument document)
+        {
             var departments = await _departmentService.GetAllDepartmentsAsync();
             var projects = await _projectService.GetAllProjectsAsync();
             var users = await _userService.GetActiveUsersAsync();
+            
             ViewBag.DepartmentId = new SelectList(departments, "Id", "Name", document.DepartmentId);
             ViewBag.ProjectId = new SelectList(projects, "Id", "ProjectCode", document.ProjectId);
             ViewBag.CheckerId = new SelectList(users, "Id", "FullName", document.CheckerId);
             ViewBag.ApproverId = new SelectList(users, "Id", "FullName", document.ApproverId);
-            return View(document);
         }
 
         // حذف سند
@@ -295,27 +390,51 @@ namespace MessageForAzarab.Controllers
         [Authorize(Roles = "Admin,Vendor")]
         public async Task<IActionResult> CreateVersion(DocumentVersion version, IFormFile? attachmentFile)
         {
-            if (ModelState.IsValid)
+            try
             {
-                try
+                // بررسی وجود سند پایه
+                var baseDoc = await _documentService.GetDocumentByIdAsync(version.BaseDocumentId);
+                if (baseDoc == null)
                 {
-                    var baseDoc = await _documentService.GetDocumentByIdAsync(version.BaseDocumentId);
-                    if (baseDoc == null)
-                    {
-                        ModelState.AddModelError("", $"سند پایه با شناسه {version.BaseDocumentId} یافت نشد.");
-                        var users = await _userService.GetActiveUsersAsync();
-                        ViewBag.AssignedToId = new SelectList(users, "Id", "FullName", version?.AssignedToId);
-                        ViewBag.BaseDocumentTitle = "نامشخص";
-                        return PartialView("_CreateVersionPartial", version);
-                    }
+                    ModelState.AddModelError("", $"سند پایه با شناسه {version.BaseDocumentId} یافت نشد.");
+                    await LoadCreateVersionViewBags(version, "نامشخص");
+                    return PartialView("_CreateVersionPartial", version);
+                }
 
-                    var currentUserId = _userManager.GetUserId(User);
-                    version.CreatorId = currentUserId;
-                    version.CreationDate = DateTime.Now;
-                    version.IsSent = false;
+                // بررسی وضعیت سند پایه
+                if (baseDoc.Status != "E")
+                {
+                    ModelState.AddModelError("", "امکان ایجاد نسخه جدید برای سند غیرفعال وجود ندارد.");
+                    await LoadCreateVersionViewBags(version, baseDoc.Title);
+                    return PartialView("_CreateVersionPartial", version);
+                }
 
+                // دریافت کاربر فعلی
+                var currentUserId = _userManager.GetUserId(User);
+                if (string.IsNullOrEmpty(currentUserId))
+                {
+                    ModelState.AddModelError("", "کاربر وارد شده یافت نشد.");
+                    await LoadCreateVersionViewBags(version, baseDoc.Title);
+                    return PartialView("_CreateVersionPartial", version);
+                }
+
+                // مقداردهی فیلدهای سیستم
+                version.CreatorId = currentUserId;
+                version.CreationDate = DateTime.Now;
+                version.IsSent = false;
+                version.Status = "O"; // باز
+
+                // پاک‌کردن ارورهای غیرضروری
+                ModelState.Remove(nameof(DocumentVersion.Creator));
+                ModelState.Remove(nameof(DocumentVersion.AssignedTo));
+                ModelState.Remove(nameof(DocumentVersion.BaseDocument));
+                ModelState.Remove(nameof(DocumentVersion.CreatorId));
+
+                if (ModelState.IsValid)
+                {
                     var createdVersion = await _documentService.CreateDocumentVersionAsync(version);
 
+                    // آپلود فایل پیوست در صورت وجود
                     if (attachmentFile != null && attachmentFile.Length > 0)
                     {
                         try
@@ -335,17 +454,23 @@ namespace MessageForAzarab.Controllers
                     
                     return Json(new { success = true, redirectUrl = Url.Action("Details", "Document", new { id = version.BaseDocumentId }) });
                 }
-                catch (Exception ex)
-                {
-                    ModelState.AddModelError("", $"خطا در ایجاد نسخه جدید: {ex.Message}");
-                }
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", $"خطا در ایجاد نسخه جدید: {ex.Message}");
             }
 
+            // در صورت خطا، بارگذاری مجدد ViewBag ها
             var docForTitle = await _documentService.GetDocumentByIdAsync(version.BaseDocumentId);
-            var usersList = await _userService.GetActiveUsersAsync();
-            ViewBag.AssignedToId = new SelectList(usersList, "Id", "FullName", version.AssignedToId);
-            ViewBag.BaseDocumentTitle = docForTitle?.Title ?? "نامشخص";
+            await LoadCreateVersionViewBags(version, docForTitle?.Title ?? "نامشخص");
             return PartialView("_CreateVersionPartial", version);
+        }
+
+        private async Task LoadCreateVersionViewBags(DocumentVersion version, string baseDocumentTitle)
+        {
+            var users = await _userService.GetActiveUsersAsync();
+            ViewBag.AssignedToId = new SelectList(users, "Id", "FullName", version.AssignedToId);
+            ViewBag.BaseDocumentTitle = baseDocumentTitle;
         }
         
         // نمایش جزئیات نسخه
