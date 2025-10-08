@@ -7,40 +7,121 @@ namespace MessageForAzarab.Models
     {
         [Key]
         public int Id { get; set; }
-        public string DocCode { get; set; }
-        public string Title { get; set; }
-        public string AzarabCode { get; set; }
-        public string ClientDocCode { get; set; }
+
+        [Required(ErrorMessage = "کد مدرک آذرآبی الزامی است")]
+        [StringLength(50, ErrorMessage = "کد مدرک آذرآبی نمی‌تواند بیش از 50 کاراکتر باشد")]
+        [Display(Name = "کد مدرک آذرآبی")]
+        public string DocCode { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "عنوان سند الزامی است")]
+        [StringLength(200, ErrorMessage = "عنوان سند نمی‌تواند بیش از 200 کاراکتر باشد")]
+        [Display(Name = "عنوان سند")]
+        public string Title { get; set; } = string.Empty;
+
+        [StringLength(50, ErrorMessage = "کد آذرآب نمی‌تواند بیش از 50 کاراکتر باشد")]
+        [Display(Name = "کد آذرآب")]
+        public string AzarabCode { get; set; } = string.Empty;
+
+        [StringLength(50, ErrorMessage = "کد مدرک کارفرما نمی‌تواند بیش از 50 کاراکتر باشد")]
+        [Display(Name = "کد مدرک کارفرما")]
+        public string? ClientDocCode { get; set; }
+
+        [StringLength(50, ErrorMessage = "شماره سند نمی‌تواند بیش از 50 کاراکتر باشد")]
+        [Display(Name = "شماره سند")]
         public string? DocNumber { get; set; }
+
+        [StringLength(500, ErrorMessage = "اطلاع‌رسانی نمی‌تواند بیش از 500 کاراکتر باشد")]
+        [Display(Name = "اطلاع‌رسانی")]
         public string? Notification { get; set; }
+
+        [StringLength(1000, ErrorMessage = "توضیحات نمی‌تواند بیش از 1000 کاراکتر باشد")]
+        [Display(Name = "توضیحات")]
         public string? Description { get; set; }
+
+        [Display(Name = "تاریخ سند")]
         public string? DocDate { get; set; }
+
+        [Display(Name = "تاریخ برنامه‌ریزی")]
         public string? PlanDate { get; set; }
+
+        [Display(Name = "اولین ارسال")]
         public string? FirstSubmit { get; set; }
+
+        [Display(Name = "NC")]
         public string? NC { get; set; }
+
+        [Display(Name = "AN")]
         public string? AN { get; set; }
+
+        [Display(Name = "CM")]
         public string? CM { get; set; }
+
+        [Display(Name = "رد شده")]
         public string? Reject { get; set; }
+
+        [Display(Name = "اطلاعات")]
         public string? Information { get; set; }
+
+        [Display(Name = "پیشرفت")]
         public string? Progress { get; set; }
+
+        [Display(Name = "مسئول")]
         public string? Responsible { get; set; }
-        public DateTime CreationDate { get; set; }
+
+        [Display(Name = "تاریخ ایجاد")]
+        public DateTime CreationDate { get; set; } = DateTime.Now;
+
+        [Required(ErrorMessage = "انتخاب دپارتمان الزامی است")]
+        [Display(Name = "دپارتمان")]
         public int DepartmentId { get; set; }
+
+        [Required(ErrorMessage = "انتخاب پروژه الزامی است")]
+        [Display(Name = "پروژه")]
         public int ProjectId { get; set; }
-        public string CreatorId { get; set; }
-        public string LastModifierId { get; set; }
+
+        [Required]
+        [Display(Name = "ایجادکننده")]
+        public string CreatorId { get; set; } = string.Empty;
+
+        [Required]
+        [Display(Name = "آخرین ویرایش‌کننده")]
+        public string LastModifierId { get; set; } = string.Empty;
+
+        [Display(Name = "تاریخ آخرین ویرایش")]
         public DateTime? LastModificationDate { get; set; }
+
         // Properties from migration
+        [Display(Name = "وضعیت")]
         public string Status { get; set; } = "E";  // Default to "E" for active
+
+        [Display(Name = "نسخه فعلی")]
         public int CurrentRevision { get; set; } = 0;  // Default to 0
+
+        [Display(Name = "فعال")]
         public bool IsActive { get; set; } = true;  // Default to true
+
+        [Display(Name = "وضعیت صدور")]
         public DocumentIssueStatus IssueStatus { get; set; } = DocumentIssueStatus.NotIssuable;
+
+        [Display(Name = "مرحله بررسی")]
         public DocumentReviewStage ReviewStage { get; set; } = DocumentReviewStage.Designer;
+
+        [Display(Name = "صحه‌گذار")]
         public string? CheckerId { get; set; }
+
+        [Display(Name = "تصدیق‌کننده")]
         public string? ApproverId { get; set; }
+
+        [Display(Name = "تاریخ صحه‌گذاری")]
         public DateTime? DateChecker { get; set; }
+
+        [Display(Name = "تاریخ تصدیق")]
         public DateTime? DateApprover { get; set; }
+
+        [Display(Name = "معلق")]
         public bool Hold { get; set; } = false;
+
+        [Display(Name = "تاریخ پیش‌بینی")]
         public DateTime? ForecastDate { get; set; }
         
         [ForeignKey("CheckerId")]
@@ -68,18 +149,22 @@ namespace MessageForAzarab.Models
         public int Id { get; set; } // معادل Si در دیتابیس قدیمی
         
         // ارتباط با سند پایه
-        [Required]
+        [Required(ErrorMessage = "شناسه سند پایه الزامی است")]
+        [Display(Name = "سند پایه")]
         public int BaseDocumentId { get; set; } // معادل si_basevdis
         [ForeignKey("BaseDocumentId")]
         public virtual BaseDocument? BaseDocument { get; set; }
         
         // شماره نسخه
+        [Required(ErrorMessage = "شماره نسخه الزامی است")]
+        [Range(0, int.MaxValue, ErrorMessage = "شماره نسخه باید عدد مثبت باشد")]
         [Display(Name = "شماره نسخه")]
         public int RevisionNumber { get; set; } // معادل si_verd
         
         // ایجادکننده سند
+        [Required(ErrorMessage = "ایجادکننده الزامی است")]
         [Display(Name = "ایجادکننده")]
-        public string CreatorId { get; set; } 
+        public string CreatorId { get; set; } = string.Empty;
         [ForeignKey("CreatorId")]
         public virtual ApplicationUser? Creator { get; set; }
         
@@ -92,12 +177,13 @@ namespace MessageForAzarab.Models
         public DateTime? DateSend { get; set; }
         
         // وضعیت سند
+        [Required(ErrorMessage = "وضعیت الزامی است")]
         [Display(Name = "وضعیت")]
         public string Status { get; set; } = "O"; // O = باز، C = بسته شده
         
         // پیشرفت
         [Display(Name = "پیشرفت")]
-        [Range(0, 100)]
+        [Range(0, 100, ErrorMessage = "پیشرفت باید بین 0 تا 100 باشد")]
         public int Progress { get; set; } = 0;
         
         // تخصیص به
@@ -188,10 +274,12 @@ namespace MessageForAzarab.Models
         [Key]
         public int Id { get; set; } // معادل Si
         
-        [Required]
+        [Required(ErrorMessage = "نام دپارتمان الزامی است")]
+        [StringLength(100, ErrorMessage = "نام دپارتمان نمی‌تواند بیش از 100 کاراکتر باشد")]
         [Display(Name = "نام دپارتمان")]
         public string Name { get; set; } = string.Empty; // معادل deptname
         
+        [StringLength(500, ErrorMessage = "توضیحات نمی‌تواند بیش از 500 کاراکتر باشد")]
         [Display(Name = "توضیحات")]
         public string? Description { get; set; }
         
@@ -216,25 +304,32 @@ namespace MessageForAzarab.Models
         public int Id { get; set; }
         
         //ارتباط با رویژن   
-        [Required]
+        [Required(ErrorMessage = "شناسه نسخه سند الزامی است")]
+        [Display(Name = "نسخه سند")]
         public int DocumentVersionId { get; set; }
         [ForeignKey("DocumentVersionId")]
         public virtual DocumentVersion DocumentVersion { get; set; } = null!;
         
         // نام فایل
-        [Required]
+        [Required(ErrorMessage = "نام فایل الزامی است")]
+        [StringLength(255, ErrorMessage = "نام فایل نمی‌تواند بیش از 255 کاراکتر باشد")]
         [Display(Name = "نام فایل")]
         public string FileName { get; set; } = string.Empty;
         
         // مسیر فایل
-        [Required]
+        [Required(ErrorMessage = "مسیر فایل الزامی است")]
+        [StringLength(500, ErrorMessage = "مسیر فایل نمی‌تواند بیش از 500 کاراکتر باشد")]
+        [Display(Name = "مسیر فایل")]
         public string FilePath { get; set; } = string.Empty;
         
         // حجم فایل
-        [Display(Name = "حجم فایل")]
+        [Range(0, long.MaxValue, ErrorMessage = "حجم فایل باید عدد مثبت باشد")]
+        [Display(Name = "حجم فایل (بایت)")]
         public long FileSize { get; set; }
         
         // نوع فایل
+        [Required(ErrorMessage = "نوع فایل الزامی است")]
+        [StringLength(100, ErrorMessage = "نوع فایل نمی‌تواند بیش از 100 کاراکتر باشد")]
         [Display(Name = "نوع فایل")]
         public string ContentType { get; set; } = string.Empty;
         
@@ -247,5 +342,22 @@ namespace MessageForAzarab.Models
         public string? UploaderId { get; set; }
         [ForeignKey("UploaderId")]
         public virtual ApplicationUser? Uploader { get; set; }
+
+        // محاسبه حجم فایل به صورت خوانا
+        [Display(Name = "حجم فایل")]
+        public string FileSizeFormatted => FormatFileSize(FileSize);
+
+        private static string FormatFileSize(long bytes)
+        {
+            string[] sizes = { "B", "KB", "MB", "GB", "TB" };
+            double len = bytes;
+            int order = 0;
+            while (len >= 1024 && order < sizes.Length - 1)
+            {
+                order++;
+                len = len / 1024;
+            }
+            return $"{len:0.##} {sizes[order]}";
+        }
     }
 } 

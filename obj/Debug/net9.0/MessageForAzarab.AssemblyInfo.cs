@@ -15,7 +15,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MessageForAzarab")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a22242beee6d7301d5faf4130e64c5f0bc06b69f")]
 [assembly: System.Reflection.AssemblyProductAttribute("MessageForAzarab")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MessageForAzarab")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

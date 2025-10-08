@@ -27,10 +27,12 @@ namespace MessageForAzarab.Migrations
 
                     b.Property<string>("Address")
                         .IsRequired()
+                        .HasMaxLength(500)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("CompanyName")
                         .IsRequired()
+                        .HasMaxLength(200)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("ConcurrencyStamp")
@@ -39,6 +41,7 @@ namespace MessageForAzarab.Migrations
 
                     b.Property<string>("Description")
                         .IsRequired()
+                        .HasMaxLength(1000)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Email")
@@ -50,6 +53,7 @@ namespace MessageForAzarab.Migrations
 
                     b.Property<string>("FullName")
                         .IsRequired()
+                        .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
                     b.Property<bool>("IsActive")
@@ -77,6 +81,7 @@ namespace MessageForAzarab.Migrations
 
                     b.Property<string>("PhoneNumber2")
                         .IsRequired()
+                        .HasMaxLength(20)
                         .HasColumnType("TEXT");
 
                     b.Property<bool>("PhoneNumberConfirmed")
@@ -259,6 +264,7 @@ namespace MessageForAzarab.Migrations
 
                     b.Property<string>("AzarabCode")
                         .IsRequired()
+                        .HasMaxLength(50)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("CM")
@@ -268,7 +274,7 @@ namespace MessageForAzarab.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("ClientDocCode")
-                        .IsRequired()
+                        .HasMaxLength(50)
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("CreationDate")
@@ -291,16 +297,19 @@ namespace MessageForAzarab.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Description")
+                        .HasMaxLength(1000)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("DocCode")
                         .IsRequired()
+                        .HasMaxLength(50)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("DocDate")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("DocNumber")
+                        .HasMaxLength(50)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("FirstSubmit")
@@ -332,6 +341,7 @@ namespace MessageForAzarab.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Notification")
+                        .HasMaxLength(500)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("PlanDate")
@@ -358,6 +368,7 @@ namespace MessageForAzarab.Migrations
 
                     b.Property<string>("Title")
                         .IsRequired()
+                        .HasMaxLength(200)
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
@@ -387,10 +398,12 @@ namespace MessageForAzarab.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Description")
+                        .HasMaxLength(500)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
                         .IsRequired()
+                        .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
@@ -406,6 +419,7 @@ namespace MessageForAzarab.Migrations
 
                     b.Property<string>("ContentType")
                         .IsRequired()
+                        .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
                     b.Property<int>("DocumentVersionId")
@@ -413,10 +427,12 @@ namespace MessageForAzarab.Migrations
 
                     b.Property<string>("FileName")
                         .IsRequired()
+                        .HasMaxLength(255)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("FilePath")
                         .IsRequired()
+                        .HasMaxLength(500)
                         .HasColumnType("TEXT");
 
                     b.Property<long>("FileSize")
@@ -638,6 +654,7 @@ namespace MessageForAzarab.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Description")
+                        .HasMaxLength(1000)
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime?>("EndDate")
@@ -648,6 +665,7 @@ namespace MessageForAzarab.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
+                        .HasMaxLength(200)
                         .HasColumnType("TEXT");
 
                     b.Property<int?>("OptionId")
@@ -655,6 +673,7 @@ namespace MessageForAzarab.Migrations
 
                     b.Property<string>("ProjectCode")
                         .IsRequired()
+                        .HasMaxLength(50)
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime?>("StartDate")
@@ -680,12 +699,14 @@ namespace MessageForAzarab.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Description")
+                        .HasMaxLength(500)
                         .HasColumnType("TEXT");
 
                     b.Property<bool>("IsDepartmentManager")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Role")
+                        .HasMaxLength(50)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("UserId")

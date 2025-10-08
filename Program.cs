@@ -5,6 +5,7 @@ using MessageForAzarab.Services.Interface;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
+using System.IO.Compression;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -37,6 +38,24 @@ builder.Services.AddScoped<IExcelProcessingService , ExcelProcessingService>();
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddSingleton<IWebHostEnvironment>(builder.Environment);
+
+// تنظیمات امنیتی
+builder.Services.AddHsts(options =>
+{
+    options.Preload = true;
+    options.IncludeSubDomains = true;
+    options.MaxAge = TimeSpan.FromDays(365);
+});
+
+// تنظیمات فشرده‌سازی
+builder.Services.AddResponseCompression();
+
+// تنظیمات کش
+builder.Services.AddMemoryCache();
+builder.Services.AddResponseCaching();
+
+// تنظیمات Data Protection
+builder.Services.AddDataProtection();
 
 var app = builder.Build();
 
@@ -95,12 +114,25 @@ if (app.Environment.IsDevelopment())
 else
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
+// استفاده از middleware های بهینه‌سازی
+app.UseResponseCompression();
+app.UseResponseCaching();
+
 app.UseHttpsRedirection();
-app.UseStaticFiles();
+
+// تنظیمات امنیتی برای فایل‌های استاتیک
+app.UseStaticFiles(new StaticFileOptions
+{
+    OnPrepareResponse = ctx =>
+    {
+        const int durationInSeconds = 60 * 60 * 24 * 30; // 30 روز
+        ctx.Context.Response.Headers.Append("Cache-Control", $"public,max-age={durationInSeconds}");
+    }
+});
+
 app.UseRouting();
 
 app.UseAuthentication();

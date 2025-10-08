@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  messageforazarab:
+    build: .
+    ports:
+      - "8080:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:80
+    volumes:
+      - ./wwwroot/uploads:/app/wwwroot/uploads
+      - ./wwwroot/keys:/app/wwwroot/keys
+      - ./logs:/app/logs
+      - ./MessageForAzarab.db:/app/MessageForAzarab.db
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./ssl:/etc/nginx/ssl
+    depends_on:
+      - messageforazarab
+    restart: unless-stopped
+
+volumes:
+  uploads:
+  keys:
+  logs:
